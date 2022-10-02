@@ -1,0 +1,18 @@
+          - name: {{ col_name }}
+            description: "{{ col_description }}"
+            {%- if unique_key_field != '' %}
+            tests:
+              - unique
+              - not_null
+            {%- endif -%}
+            {%- if accepted_values_field != '' %}
+            tests:
+              - accepted_values:
+                  values: {{ accepted_values_field }}
+            {%- endif -%}
+            {%- if relationships_table_field != '' %}
+            tests:
+              - relationships:
+                  to: ref('{{ relationships_field }}')
+                  field: {{ relationships_field }}
+            {%- endif -%}

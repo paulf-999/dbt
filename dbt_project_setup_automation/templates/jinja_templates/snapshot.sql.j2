@@ -1,0 +1,19 @@
+{% raw %}{%{% endraw %} snapshot {{ src_tbl_name }}_snapshot {% raw %}%}{% endraw %}
+
+{% raw %}{{{% endraw %}
+    config(
+        target_database='{{ source_name }}_hist_dev',
+        target_schema='snapshot',
+        unique_key='{{ unique_key }}',
+
+        strategy='timestamp',
+        updated_at='{{ updated_at_field }}',
+        invalidate_hard_deletes=True
+    )
+{% raw %}}}{% endraw %}
+
+SELECT *
+FROM {% raw %}{{{% endraw %} source('{{ source_name }}', '{{ src_tbl_name }}') {% raw %}}}{% endraw %}
+LIMIT 5
+
+{% raw %}{%{% endraw %} endsnapshot {% raw %}%}{% endraw %}

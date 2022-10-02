@@ -1,0 +1,15 @@
+{{ DBT_PROFILE_NAME }}:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: {{ DBT_SNOWFLAKE_ACCOUNT }}
+      role: R_F_AIRFLOW_{{ ENV }}
+
+      user: {{ DBT_SNOWFLAKE_USER }}
+      private_key_path: {{ DBT_SNOWFLAKE_PRIVATE_FILE }}
+
+      database: AAC_{{ ENV }}
+      warehouse: WH_SVC_AIRFLOW_XS_{{ ENV }}
+      schema: cleaned
+      threads: 200

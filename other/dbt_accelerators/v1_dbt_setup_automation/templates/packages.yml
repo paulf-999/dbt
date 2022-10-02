@@ -1,0 +1,6 @@
+packages:
+  - package: dbt-labs/dbt_utils
+    version: 0.1.7
+
+  - git: "git@github.com:calogica/dbt-expectations.git"
+    revision: 0.5.1

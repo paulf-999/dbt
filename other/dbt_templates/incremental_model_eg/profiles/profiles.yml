@@ -1,0 +1,15 @@
+dbt_svc_profile:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('BIKE_SHOP_SNOWFLAKE_ACCOUNT') }}"
+      role: "{{ env_var('BIKE_SHOP_DBT_SVC') }}"
+      user: "{{ env_var('BIKE_SHOP_DBT_USER') }}"
+      password: "{{ env_var('BIKE_SHOP_DBT_PASS') }}"
+
+      database: "{{ env_var('BIKE_SHOP_DB') }}"
+      warehouse: "{{ env_var('BIKE_SHOP_WH') }}"
+      schema: "{{ env_var('BIKE_SHOP_SCHEMA') }}"
+      threads: 4
+      client_session_keep_alive: False

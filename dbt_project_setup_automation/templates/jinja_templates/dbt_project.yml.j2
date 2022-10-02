@@ -1,0 +1,77 @@
+# For a full list of the config options available for the dbt_project.yml file, see: https://docs.getdbt.com/reference/dbt_project.yml
+
+# Name of the dbt project. Must be snake_case, i.e., letters, digits and underscores only, and cannot start with a digit.
+# Recommendation: often an organisation has one dbt project, so it makes sense to name a project with your organisation's name, in snake_case.
+name: '{{ DBT_PROJECT_NAME }}'
+config-version: 2
+version: '1.0.0'
+
+# The profile your dbt project should use to connect to your data warehouse.
+# Recommendation: Often an organisation has only one data warehouse, so it makes sense to use your organisation's name as a profile name, in snake_case.
+profile: '{{ DBT_PROFILE_NAME }}'
+
+# These configurations specify where dbt should look for different types of files. To avoid confusion, the defaults have been used.
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+require-dbt-version: ">={{ DBT_VERSION }}" # as per dbt's recommendation, require users to at least have v1.0.0 of dbt (see: https://docs.getdbt.com/reference/project-configs/require-dbt-version)
+
+# example - grant privilege to newly created tables/views to end-users
+#on-run-end:
+#- "\\ grant_select_on_schemas(schemas, 'reporter') \\"
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+# The model configurations listed below follow dbt's best practices, described here: https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview
+models:
+  {{ DBT_PROJECT_NAME }}:
+    staging:
+      # TODO - edit
+      # Purpose: The purpose of the staging layer is to ...
+      +materialized: view
+    intermediate:
+      # TODO - edit
+      # Purpose: The purpose of the staging layer is to ...
+      +materialized: ephemeral
+    marts:
+      # Purpose: The purpose of the marts layer is to store the enterprise (dimensional) data model.
+      +materialized: table
+
+
+# The model configurations listed below follow dbt's best practices, described here: https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview
+models:
+  {{ DBT_PROJECT_NAME }}:
+    staging:
+      +materialized: view
+      # Purpose: The purpose of the staging layer is to ...
+      # Staging models help us keep our code DRY and should typically be materialized as views for two key reasons:
+      # 1) Any downstream model referencing our staging models will always get the freshest data possible from all of the component views it’s pulling together and materializing
+      # 2) It avoids wasting space in the warehouse on models that are not intended to be queried by data consumers, and thus do not need to perform as quickly or efficiently
+    intermediate:
+      # Purpose: The purpose of the staging layer is to ...
+      # It is popular to default materializing intermediate models ephemerally - this is generally the best place to start for simplicity.
+      # It will keep unnecessary models out of your warehouse with minimum configuration.
+      # Keep in mind though that the simplicity of ephemerals does translate a bit more difficulty in troubleshooting,
+      # as they’re interpolated into the models that ref them, rather than existing on their own in a way that you can view the output of.
+      +materialized: ephemeral
+      # A more robust option is to materialize your intermediate models as views in a specific custom schema, outside of your main production schema.
+      # This gives you added insight into development and easier troubleshooting as the number and complexity of your models grows, while remaining easy to implement and taking up negligible space.
+      #+materialized: view
+    marts:
+      # Purpose: The purpose of the marts layer is to store the enterprise (dimensional) data model
+      # Materialise as tables - this gives end users much faster performance for these later models that are actually designed for their use, and saves us costs recomputing these entire chains of models every time somebody refreshes a dashboard or runs a regression in python.
+      # In development, materialise as views
+      # A good general rule of thumb regarding materialization is to always start with a view (as it takes up essentially no storage and always gives you up-to-date results)
+      # Once that view takes too long to practically query, build it into a table, and finally once that table takes too long to build and is slowing down your runs, configure it as an incremental model.
+      +materialized: table
+      finance:
+        +schema: finance
+      marketing:
+        +schema: marketing

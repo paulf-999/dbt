@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: bike_production
+    database: bikestores_raw_db
+    schema: production
+    tables:
+      - name: brands
+      - name: categories
+      - name: products
+      - name: stocks
+  - name: bike_sales
+    database: bikestores_raw_db
+    schema: sales
+    tables:
+      - name: customers
+      - name: orders
+      - name: order_items
+      - name: staffs
+      - name: stores

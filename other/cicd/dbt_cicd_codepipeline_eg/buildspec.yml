@@ -1,0 +1,29 @@
+version: 0.2
+
+env:
+  variables:
+    DBT_PROJECT_NAME: "bikestores"
+    DBT_MODEL: "curated_db"
+    SNOWFLAKE_ACCOUNT: "km45877.ap-southeast-2"
+    SNOWFLAKE_USER: "PAUL999"
+    SNOWFLAKE_ROLE: "bikestores_dbt_svc"
+    SNOWFLAKE_DB: "bikestores_curated_db"
+    SNOWFLAKE_WH: "bikestores_developer_wh"
+    SNOWFLAKE_SCHEMA: "production"
+  parameter-store:
+    SNOWFLAKE_PASS: /snowflake/bikestores
+    SNOWFLAKE_ACCOUNT: /snowflake/account
+phases:
+  install:
+    commands:
+      - pip install --upgrade pip
+      - pip install --upgrade dbt
+      - pip install envsubst
+  pre_build:
+    commands:
+      - envsubst < bin/profiles/profiles.yml > bin/${DBT_PROJECT_NAME}/profiles/profiles.yml
+      - cat bin/${DBT_PROJECT_NAME}/profiles/profiles.yml
+  build:
+    commands:
+      - cd bin/${DBT_PROJECT_NAME} && dbt debug --profiles-dir profiles
+      - dbt test --data --profiles-dir profiles --models ${DBT_MODEL}
