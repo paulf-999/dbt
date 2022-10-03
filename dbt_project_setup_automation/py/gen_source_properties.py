@@ -12,17 +12,8 @@ __version__ = "0.1"
 
 import os
 import pandas as pd
-import json
-from common import logger, working_dir, jinja_env_source
+from common import logger, jinja_env_source
 import inputs
-
-
-def generate_source_file(rendered_schema_header, rendered_schema_tbl, sum_rendered_table_pairs_op):
-    """Generates the output (dbt) source.yml file"""
-
-
-
-    return
 
 
 def read_xls_file(data_dictionary, xls_sheet_name):
@@ -68,6 +59,7 @@ if __name__ == "__main__":
         data_src=data_src, src_db=src_db, src_db_schema=src_db_schema)
     # fmt: on
 
+    # TODO - put the folder check logic into a function
     target_dir = f"op/{data_src}/"
 
     # make the target dir if it doesn't exist
@@ -79,6 +71,7 @@ if __name__ == "__main__":
     with open((op_sources_file), "w") as op_src_file:
         op_src_file.write(f"{rendered_schema_header}\n")
 
+    # TODO: potentially put this for loop into a function
     # extract data from each XLS sheet
     for xls_sheet_name in xls_sheet_names:
         logger.debug(f"sheet_name = {xls_sheet_name}")
@@ -113,6 +106,3 @@ if __name__ == "__main__":
         with open((op_sources_file), "a+") as op_src_file:
             op_src_file.write(f"{rendered_schema_tbl}")
             op_src_file.write(f"{sum_rendered_table_pairs_op}\n")
-
-        # TODO: delete and tidy this
-        #generate_source_file(rendered_schema_header, rendered_schema_tbl, sum_rendered_table_pairs_op, op_src_file)
