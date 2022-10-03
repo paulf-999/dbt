@@ -1,16 +1,39 @@
           - name: {{ col_name }}
-            description: "{{ col_description }}"
+            {#- |safe is used to instruct jinja to render description directly #}
+            description: "{{ col_description|safe }}"
+            {#- 1. check 'unique_key_field' combinations #}
             {%- if unique_key_field != '' %}
             tests:
               - unique
               - not_null
+            {%- if accepted_values_field != '' %}
+              - accepted_values:
+                  values: {{ accepted_values_field }}
             {%- endif -%}
+
+            {%- if relationships_table_field != '' %}
+              - relationships:
+                  to: ref('{{ relationships_field }}')
+                  field: {{ relationships_field }}
+            {%- endif -%}
+
+            {%- endif -%}
+            {#- close 1. check 'unique_key_field' combinations #}
+
+            {#- 2. check 'accepted_values_field' combinations #}
             {%- if accepted_values_field != '' %}
             tests:
               - accepted_values:
                   values: {{ accepted_values_field }}
-            {%- endif -%}
             {%- if relationships_table_field != '' %}
+              - relationships:
+                  to: ref('{{ relationships_field }}')
+                  field: {{ relationships_field }}
+            {%- endif -%}
+
+            {#- close 2. check 'accepted_values_field' combinations #}
+            {%- endif -%}
+            {%- if relationships_table_field != '' and unique_key_field == '' and relationships_table_field == ''%}
             tests:
               - relationships:
                   to: ref('{{ relationships_field }}')

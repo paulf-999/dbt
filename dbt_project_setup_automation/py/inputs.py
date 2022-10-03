@@ -28,8 +28,9 @@ def get_ips():
     # data dictionary inputs
     data_dictionary = data["data_dictionary_params"]["data_dictionary"]
     xls_sheet_names = data["data_dictionary_params"]["data_dic_sheet_names"]
+    target_op_src_filename = data["general_params"]["target_op_src_filename"].replace("{data_src}", data_src)
 
-    return data_src, src_db, src_db_schema, data_dictionary, xls_sheet_names
+    return data_src, src_db, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename
 
 
 def get_data_dictionary_args():

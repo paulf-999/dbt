@@ -22,34 +22,34 @@ from common import logger, working_dir, jinja_env
 def render_jinja_and_gen_sql():
     """Iterate through the input tables for a division and render/generate SQL op files"""
     logger.debug("Function called: render_jinja_and_gen_sql()")
-    for division, src_tables in div_tbls_dict.items():
+    for data_src, src_tables in data_src_tbls_dict.items():
         logger.info("--------------------------------")
-        logger.info(f"# Division = {division.upper()}")
+        logger.info(f"data_src = {data_src}")
         logger.info("--------------------------------")
 
         # only fetch the tables for the targeted division
-        if division == ip_division:
+        if data_src == data_src:
             for src_table in src_tables:
                 # read in the CSV file to determine 'unique_key' & 'load_date_field' fields
-                unique_key, updated_at_field = read_csv_data_dictionary(src_table)
+                unique_key, updated_at_field = read_summary_data_src_metadata(data_src, src_table)
 
                 # render the table output using this
                 # fmt: off
-                rendered_sql = jinja_env.get_template(f"{jinja_template}.sql.j2").render(
-                    source_name=division,
+                rendered_sql = jinja_env.get_template(f"{ip_jinja_template}.sql.j2").render(
+                    source_name=data_src,
                     src_tbl_name=src_table,
                     updated_at_field=updated_at_field,
                     unique_key=unique_key
                 )
                 # fmt: on
 
-                target_dir = f"{division}/{jinja_template}"
+                target_dir = f"op/{data_src}/{ip_jinja_template}"
 
                 # make the target dir if it doesn't exist
                 if not os.path.exists(target_dir):
                     os.makedirs(target_dir)
 
-                op_filepath = os.path.join(working_dir, "op", f"{division}_{src_table}.sql")
+                op_filepath = os.path.join(target_dir, f"{src_table}.sql")
 
                 with open((op_filepath), "w") as op_sql_file:
                     op_sql_file.write(rendered_sql)
@@ -57,24 +57,32 @@ def render_jinja_and_gen_sql():
     return
 
 
-# TODO: revert this to instead read an xlsx file
-def read_csv_data_dictionary(src_table):
+def read_summary_data_src_metadata(data_src, src_table):
     """Parse CSV data dictionary"""
-    logger.debug("Function called: read_csv_data_dictionary()")
+    logger.debug("Function called: read_summary_data_src_metadata()")
+    logger.info("--------------------------------")
     logger.info(f"src_table = {src_table}")
-    logger.debug("---------------------------")
+    logger.info("--------------------------------")
+
+    with open(os.path.join(working_dir, "ip", "config.json")) as f:
+        data = json.load(f)
+
+    summary_data_src_metadata = data["general_params"]["summary_data_src_metadata"]
+    data_src_metadata_sheet_name = data["general_params"]["data_src_metadata_sheet_name"]
 
     # read in data dictionary as df to determine 'unique_key' & 'load_date_field' fields
-    df = pd.read_csv(data_dictionary, skiprows=2).reset_index()
+    df = pd.read_excel(summary_data_src_metadata, sheet_name=data_src_metadata_sheet_name, skiprows=2).fillna("").reset_index()
+
+    # logger.info(df)
+
     # filter data frame to only return the metadata for the table we're interested in
-    df = df.loc[(df["division"] == ip_division.upper()) & (df["table"] == src_table)]
-    logger.debug(df)
+    df = df.loc[(df["data_src"] == data_src) & (df["table"] == src_table)]
 
     unique_key = df["unique_key"].values[0]
     updated_at_field = df["updated_at_field"].values[0]
 
-    logger.debug(f"unique_key = {unique_key}")
-    logger.debug(f"load_date_field = {updated_at_field}")
+    logger.info(f"unique_key = {unique_key}")
+    logger.info(f"updated_at_field = {updated_at_field}")
 
     return unique_key, updated_at_field
 
@@ -86,49 +94,47 @@ def get_ips():
     with open(os.path.join(working_dir, "ip", "config.json")) as f:
         data = json.load(f)
 
-    ip_division = data["general_params"]["data_src"]
-    data_dictionary = data["data_dictionary_params"]["data_dictionary"]
+    data_src = data["general_params"]["data_src"]
 
-    div_tbls_dict = {}
-    div_tbls_dict["ofw"] = data["data_src_params"]["src_tables"]["ofw_src_tables"]
-    # div_tbls_dict["bun"] = data["data_src_params"]["division_src_tables"]["BUNSrcTables"]
-    # div_tbls_dict["kmt"] = data["data_src_params"]["division_src_tables"]["KMTSrcTables"]
-    # div_tbls_dict["cat"] = data["data_src_params"]["division_src_tables"]["CATSrcTables"]
-    # div_tbls_dict["tgt"] = data["data_src_params"]["division_src_tables"]["TGTSrcTables"]
+    data_src_tbls_dict = {}
+    data_src_tbls_dict["data_src_a"] = data["data_src_params"]["data_src_tables"]["src_tables"]
+    # data_src_tbls_dict["ofw"] = data["data_src_params"]["src_tables"]["ofw_src_tables"]
+    # data_src_tbls_dict["bun"] = data["data_src_params"]["src_tables"]["BUNSrcTables"]
+    # data_src_tbls_dict["kmt"] = data["data_src_params"]["src_tables"]["KMTSrcTables"]
+    # data_src_tbls_dict["cat"] = data["data_src_params"]["src_tables"]["CATSrcTables"]
+    # data_src_tbls_dict["tgt"] = data["data_src_params"]["src_tables"]["TGTSrcTables"]
 
-    return ip_division, data_dictionary, div_tbls_dict
-
-
-def read_excel_data_dictionary(src_table, sheet_name):
-    """Parse xls data dictionary"""
-    logger.debug("Function called: read_csv_data_dictionary()")
-    logger.info(f"src_table = {src_table}")
-    logger.debug("---------------------------")
-
-    # create a data frame from the excel sheet & reset the index to iterate through the rows
-    df = pd.read_excel(data_dictionary, sheet_name=f"{sheet_name}").fillna("").reset_index()
-    # use row 1 values as the header
-    df = pd.DataFrame(df.values[1:], columns=df.iloc[0])
-
-    return df
+    return data_src, data_src_tbls_dict
 
 
 if __name__ == "__main__":
-    # TODO - move elsewhere. determine the jinja template we require from user input
+
     # validate user input
     if len(sys.argv) < 2:
-        logger.info("\nError: No input arguments provided.\n")
-        logger.info("Usage: python3 gen_dbt_sql_objs.py <jinja_template_name>\n")
-        logger.info("Available jinja templates are: 'snapshot' and 'incremental'.\n")
-        logger.info("Example: python3 gen_dbt_sql_objs.py snapshot")
-        raise (SystemExit)
+        logger.error("\nError: No input argument provided.\n")
+        logger.error("Usage: python3 gen_dbt_sql_objs.py <ip_jinja_template_name>\n")
+        logger.error("Available jinja templates are: 'snapshot' and 'incremental'.\n")
+        logger.error("Example: python3 gen_dbt_sql_objs.py snapshot")
+        raise SystemExit
     else:
-        # TODO: validate the input as either 'snapshot' or 'incremental'.
+        ip_jinja_template = sys.argv[1]
+        valid_cmd_line_inputs = {
+            "snapshot": 1,
+            "incremental": 2,
+        }
 
-        jinja_template = sys.argv[1]
+        try:
+            # validate cmd line input
+            validate_cmd_line_ip = valid_cmd_line_inputs[ip_jinja_template]
 
-        # fetch list of div tables
-        ip_division, data_dictionary, div_tbls_dict = get_ips()
+            # fetch list of div tables
+            data_src, data_src_tbls_dict = get_ips()
 
-        # call main routine
-        render_jinja_and_gen_sql()
+            # call main routine
+            render_jinja_and_gen_sql()
+
+        except KeyError:
+            logger.error(f"\nError: Invalid input argument provided: '{ip_jinja_template}'.\n")
+            logger.error("Usage: python3 gen_dbt_sql_objs.py <ip_jinja_template_name>\n")
+            logger.error("Available jinja templates are: 'snapshot' and 'incremental'.\n")
+            logger.error("Example: python3 gen_dbt_sql_objs.py snapshot")

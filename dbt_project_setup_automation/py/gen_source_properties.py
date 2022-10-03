@@ -19,18 +19,8 @@ import inputs
 
 def generate_source_file(rendered_schema_header, rendered_schema_tbl, sum_rendered_table_pairs_op):
     """Generates the output (dbt) source.yml file"""
-    with open(os.path.join(working_dir, "ip", "config.json")) as f:
-        data = json.load(f)
 
-    data_src = data["general_params"]["data_src"]
-    target_op_src_filename = data["general_params"]["target_op_src_filename"].replace("{data_src}", data_src)
 
-    op_sources_file = os.path.join(working_dir, "op", target_op_src_filename)
-
-    with open((op_sources_file), "w") as op:
-        op.write(f"{rendered_schema_header}\n")
-        op.write(f"{rendered_schema_tbl}")
-        op.write(f"{sum_rendered_table_pairs_op}\n")
 
     return
 
@@ -45,8 +35,9 @@ def read_xls_file(data_dictionary, xls_sheet_name):
     col_name_field, description_field, unique_key_field, accepted_values_field, rel_table_field, rel_field = inputs.get_data_dictionary_args()
 
     # create a data frame from the excel sheet & reset the index to iterate through the rows
-    df = pd.read_excel(data_dictionary, sheet_name=f"{xls_sheet_name}").fillna("").reset_index()
+    df = pd.read_excel(data_dictionary, sheet_name=xls_sheet_name, skiprows=2).fillna("").reset_index()
 
+    logger.debug(df)
     # create a list to store the col_name/description pairs
     list_col_name_description_pairs = []
 
@@ -69,7 +60,7 @@ def read_xls_file(data_dictionary, xls_sheet_name):
 if __name__ == "__main__":
 
     # fetch inputs from config file
-    data_src, src_db, src_db_schema, data_dictionary, xls_sheet_names = inputs.get_ips()
+    data_src, src_db, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename = inputs.get_ips()
 
     # first write the 'header' of the source.yml file
     # fmt: off
@@ -77,9 +68,20 @@ if __name__ == "__main__":
         data_src=data_src, src_db=src_db, src_db_schema=src_db_schema)
     # fmt: on
 
+    target_dir = f"op/{data_src}/"
+
+    # make the target dir if it doesn't exist
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+
+    op_sources_file = os.path.join(target_dir, target_op_src_filename)
+
+    with open((op_sources_file), "w") as op_src_file:
+        op_src_file.write(f"{rendered_schema_header}\n")
+
     # extract data from each XLS sheet
     for xls_sheet_name in xls_sheet_names:
-        logger.debug(f"sheet_name1 = {xls_sheet_name}")
+        logger.debug(f"sheet_name = {xls_sheet_name}")
 
         # extract the col_name/description pairs
         list_col_name_description_pairs = read_xls_file(data_dictionary, xls_sheet_name)
@@ -108,4 +110,9 @@ if __name__ == "__main__":
 
         logger.debug(sum_rendered_table_pairs_op)
 
-        generate_source_file(rendered_schema_header, rendered_schema_tbl, sum_rendered_table_pairs_op)
+        with open((op_sources_file), "a+") as op_src_file:
+            op_src_file.write(f"{rendered_schema_tbl}")
+            op_src_file.write(f"{sum_rendered_table_pairs_op}\n")
+
+        # TODO: delete and tidy this
+        #generate_source_file(rendered_schema_header, rendered_schema_tbl, sum_rendered_table_pairs_op, op_src_file)

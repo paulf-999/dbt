@@ -1,7 +1,11 @@
 {
     "general_params": {
         "env": "dev",
-        "data_src" : "ofw",
+        "data_src" : "data_src_a",
+        "data_src_copy" : "ofw",
+        "summary_data_src_metadata" : "ip/summary_data_src_metadata.xlsx",
+        "summary_data_src_metadata" : "ip/summary_data_src_metadata.xlsx",
+        "data_src_metadata_sheet_name" : "summary_data_src_metadata",
         "target_op_src_filename": "_{data_src}_sources.yml"
     },
     "snowflake_params": {
@@ -17,20 +21,21 @@
         "program": ""
     },
     "data_dictionary_params" : {
-        "data_dictionary" : "ip/data_dictionary.xlsx",
-        "data_dic_sheet_names" : ["Orders_2"],
-        "data_dic_col_name_field" : "Attributes_ammended",
-        "data_dic_descrip_field" : "Description",
+        "data_dictionary" : "ip/data_dictionary_data_src_eg.xlsx",
+        "data_dic_sheet_names" : ["data_src_a_table_a", "data_src_a_table_b"],
+        "data_dic_col_name_field" : "field",
+        "data_dic_descrip_field" : "description",
         "data_dic_unique_key_field" : "unique_key",
         "data_dic_updated_at_field" : "updated_at_field",
         "data_dic_accepted_values_field" : "accepted_values",
-        "data_dic_relationships_table_field" : "relationships",
-        "data_dic_relationships_field" : "relationship_field"
+        "data_dic_relationships_table_field" : "fk_contraint_table",
+        "data_dic_relationships_field" : "fk_contraint_key"
     },
     "data_src_params" : {
         "src_db" : "eg_src_db",
         "src_db_schema" : "eg_db_schema",
-        "src_tables": {
+        "data_src_tables": {
+            "src_tables": ["table_a", "table_b"],
             "ofw_src_tables": ["bp_rel_svw", "mzarticle_svw"]
         }
     }
