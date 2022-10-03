@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Python Version  : 3.8
-* Name          : gen_resource_properties_file.py
+Python Version  : 3.9
+* Name          : gen_source_properties.py
 * Description   : Parses a data dictionary file to generate a dbt source.yml file
-* Created       : 15-06-2022
-* Usage         : python3 dbt_schema_generator.py
+* Created       : 03-10-2022
+* Usage         : python3 gen_source_properties.py
 """
 
 __author__ = "Paul Fry"
