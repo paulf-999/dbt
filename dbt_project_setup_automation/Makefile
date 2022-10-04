@@ -43,8 +43,8 @@ install: get_ips
 get_ips:
 	@# Target: 'get_ips'. Get input args from ip/config.json
 	$(eval ENV=$(shell jq -r '.general_params.env' ${CONFIG_FILE}))
+	$(eval DATA_SRC=$(shell jq -r '.general_params.data_src' ${CONFIG_FILE}))
 	$(eval SUMMARY_DATA_SRC_METADATA=$(shell jq -r '.general_params.summary_data_src_metadata' ${CONFIG_FILE}))
-	$(eval DIVISION=$(shell jq -r '.general_params.division' ${CONFIG_FILE}))
 	$(eval DBT_VERSION=$(shell jq -r '.dbt_params.dbt_version' ${CONFIG_FILE}))
 	$(eval DBT_PROFILE_NAME=$(shell jq -r '.dbt_params.dbt_profile_name' ${CONFIG_FILE}))
 	$(eval DBT_PROJECT_NAME=$(shell jq -r '.dbt_params.dbt_project_name' ${CONFIG_FILE}))
@@ -109,7 +109,7 @@ gen_schema_w_codegen: get_ips
 	@echo "--------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_schema_w_codegen'. Generate the dbt schema.yml file using dbt-codegen.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "--------------------------------------------------------------------------------------"
-	@cd ${DBT_PROJECT_NAME} && dbt run-operation generate_source --args '{"schema_name": "shared", "database_name": "${DIVISION}_dev", "name": "${DIVISION}", "generate_columns": "true", "include_descriptions": "true"}' --profiles-dir=profiles > schema.yml
+	@cd ${DBT_PROJECT_NAME} && dbt run-operation generate_source --args '{"schema_name": "shared", "database_name": "${DATA_SRC}_dev", "name": "${DATA_SRC}", "generate_columns": "true", "include_descriptions": "true"}' --profiles-dir=profiles > schema.yml
 	@echo -e "version: 2\n" > ${DBT_PROJECT_NAME}/models/schema.yml
 	@tail -n +5 ${DBT_PROJECT_NAME}/schema.yml >> ${DBT_PROJECT_NAME}/models/schema.yml
 	@rm ${DBT_PROJECT_NAME}/schema.yml
@@ -122,11 +122,11 @@ gen_dbt_sql_objs: get_ips
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py ${SUMMARY_DATA_SRC_METADATA} snapshots
 	@echo "---------------------------------------------------------------"
-	@cp -r op/${DIVISION}/snapshots/ dbt_${DIVISION}/
+	@cp -r op/${DATA_SRC}/snapshots/ dbt_${DATA_SRC}/
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'incremental' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py ${SUMMARY_DATA_SRC_METADATA} incremental
-	@cp -R op/${DIVISION}/incremental/ dbt_${DIVISION}/models/rds/
+	@cp -R op/${DATA_SRC}/incremental/ dbt_${DATA_SRC}/models/rds/
 
 run_model: get_ips
 	@echo "------------------------------------------------------------------"

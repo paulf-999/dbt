@@ -2,20 +2,19 @@
     "general_params": {
         "env": "dev",
         "data_src" : "data_src_a",
-        "data_src_copy" : "ofw",
         "summary_data_src_metadata" : "ip/summary_data_src_metadata.xlsx",
         "data_src_metadata_sheet_name" : "summary_data_src_metadata",
         "target_op_src_filename": "_{data_src}_sources.yml"
     },
     "snowflake_params": {
-        "snowflake_account": "<TODO>.ap-southeast-2",
+        "snowflake_account": "<TODO>",
         "snowflake_username": "",
         "snowflake_private_key": ""
     },
     "dbt_params": {
         "dbt_version": "1.2.0",
         "dbt_profile_name": "",
-        "dbt_project_name": "dbt_${PROGRAM}",
+        "dbt_project_name": "dbt_${DATA_SRC}",
         "dbt_model": "",
         "program": ""
     },
