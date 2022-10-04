@@ -3,7 +3,7 @@ dbt_svc_profile:
   outputs:
     dev:
       type: snowflake
-      account: wesfarmersaac.ap-southeast-2
+      account: <sf_account>.ap-southeast-2
       role: R_F_AIRFLOW_{{ ENV }}
 
       user: {{ DBT_SNOWFLAKE_USER }}

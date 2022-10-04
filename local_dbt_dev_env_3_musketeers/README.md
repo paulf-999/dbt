@@ -37,14 +37,13 @@ Before you begin do the following, ensure you provide values to the each of the 
 
 | Section | Parameter | Description                  | Example |
 | ------- | -------| -----------------------------| --- |
-| SnowflakeParameters | SnowflakeUsername | Update this to reflect your own Snowflake username. | `jbloggs@wesfarmers.com.au` |
-| SnowflakeParameters | SnowflakePrivateKey | Generate a private key called `snowflake-rsa-key.p8` and store this within your `~/.ssh` folder. See [Local Airflow development - SSH-Key Generation: Confluence](https://wesfarmers-aac.atlassian.net/wiki/spaces/GAW/pages/1862959105/Local+Airflow+Development+-+SSH-Key+Generation) | `~/.ssh/snowflake-rsa-key.p8` |
+| SnowflakeParameters | SnowflakeUsername | Update this to reflect your own Snowflake username. | `jbloggs@email.com` |
+| SnowflakeParameters | SnowflakePrivateKey | Generate a private key called `snowflake-rsa-key.p8` and store this within your `~/.ssh` folder. |
 | DbtParameters | DbtProfileName | The name of the profile to use, containing the details required to connect to your data warehouse. Will be used to populate `profiles.yml`. | `eg_client_project_non_prod` |
 | DbtParameters | DbtProjectName | The name you wish to use for your DBT project. A dbt project is a directory of `.sql` and `.yml` files, which dbt uses to transform your data. | `eg_project` |
 | DbtParameters | DbtModel | * Typically aligns to the name of your target database.<br/>* Models are defined in `.sql` files, typically in the `models` directory)<br/>* Note: this must be lowercase and hyphens, spaces or underscores aren't allowed for this value | `curated_db` |
 | DbtParameters | Program | * Accronym to describe the program of work<br/>* Used extensively to prefix DB/account objects<br/>* Note: hyphens, spaces or underscores aren't allowed for this value | `DFP` <br/>(accronym for 'Data Foundations Project') |
 | GeneralParameters | Env | The name of the environment | `DEV` |
-| GeneralParameters | Division | The Wesfarmers division in which you want to create a DBT project for | `ofw` |
 
 ### How-to run
 
