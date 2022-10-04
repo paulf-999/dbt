@@ -42,17 +42,17 @@ install: get_ips
 
 get_ips:
 	@# Target: 'get_ips'. Get input args from ip/config.json
-	$(eval ENV=$(shell jq -r '.GeneralParameters.Env' ${CONFIG_FILE}))
-	$(eval DBT_VERSION=$(shell jq -r '.GeneralParameters.DbtVersion' ${CONFIG_FILE}))
-	$(eval DATA_DICTIONARY_NAME=$(shell jq -r '.GeneralParameters.DataDictionaryName' ${CONFIG_FILE}))
-	$(eval DIVISION=$(shell jq -r '.GeneralParameters.Division' ${CONFIG_FILE}))
-	$(eval DBT_PROFILE_NAME=$(shell jq -r '.DbtParameters.DbtProfileName' ${CONFIG_FILE}))
-	$(eval DBT_PROJECT_NAME=$(shell jq -r '.DbtParameters.DbtProjectName' ${CONFIG_FILE}))
-	$(eval DBT_MODEL=$(shell jq -r '.DbtParameters.DbtModel' ${CONFIG_FILE}))
-	$(eval PROGRAM=$(shell jq -r '.DbtParameters.Program' ${CONFIG_FILE}))
-	$(eval DBT_SNOWFLAKE_ACCOUNT=$(shell jq -r '.SnowflakeParameters.SnowflakeAccount' ${CONFIG_FILE}))
-	$(eval DBT_SNOWFLAKE_USER=$(shell jq -r '.SnowflakeParameters.SnowflakeUsername' ${CONFIG_FILE}))
-	$(eval DBT_SNOWFLAKE_PRIVATE_FILE=$(shell jq -r '.SnowflakeParameters.SnowflakePrivateKey' ${CONFIG_FILE}))
+	$(eval ENV=$(shell jq -r '.general_params.env' ${CONFIG_FILE}))
+	$(eval SUMMARY_DATA_SRC_METADATA=$(shell jq -r '.general_params.summary_data_src_metadata' ${CONFIG_FILE}))
+	$(eval DIVISION=$(shell jq -r '.general_params.division' ${CONFIG_FILE}))
+	$(eval DBT_VERSION=$(shell jq -r '.dbt_params.dbt_version' ${CONFIG_FILE}))
+	$(eval DBT_PROFILE_NAME=$(shell jq -r '.dbt_params.dbt_profile_name' ${CONFIG_FILE}))
+	$(eval DBT_PROJECT_NAME=$(shell jq -r '.dbt_params.dbt_project_name' ${CONFIG_FILE}))
+	$(eval DBT_MODEL=$(shell jq -r '.dbt_params.dbt_model' ${CONFIG_FILE}))
+	$(eval PROGRAM=$(shell jq -r '.dbt_params.program' ${CONFIG_FILE}))
+	$(eval DBT_SNOWFLAKE_ACCOUNT=$(shell jq -r '.snowflake_params.snowflake_account' ${CONFIG_FILE}))
+	$(eval DBT_SNOWFLAKE_USER=$(shell jq -r '.snowflake_params.snowflake_username' ${CONFIG_FILE}))
+	$(eval DBT_SNOWFLAKE_PRIVATE_FILE=$(shell jq -r '.snowflake_params.snowflake_private_key' ${CONFIG_FILE}))
 
 #############################################################################################
 # Targets used for dbt project setup
@@ -120,12 +120,12 @@ gen_dbt_sql_objs: get_ips
 	@echo "-------------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'snapshots' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
-	@python3 py/gen_dbt_sql_objs.py ${DATA_DICTIONARY_NAME} snapshots
+	@python3 py/gen_dbt_sql_objs.py ${SUMMARY_DATA_SRC_METADATA} snapshots
 	@echo "---------------------------------------------------------------"
 	@cp -r op/${DIVISION}/snapshots/ dbt_${DIVISION}/
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'incremental' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
-	@python3 py/gen_dbt_sql_objs.py ${DATA_DICTIONARY_NAME} incremental
+	@python3 py/gen_dbt_sql_objs.py ${SUMMARY_DATA_SRC_METADATA} incremental
 	@cp -R op/${DIVISION}/incremental/ dbt_${DIVISION}/models/rds/
 
 run_model: get_ips

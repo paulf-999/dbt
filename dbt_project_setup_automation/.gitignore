@@ -2,6 +2,7 @@
 __pycache__/
 logs/
 
+dbt_/
 dbt_ofw/
 dbt_bun/
 dbt_cat/

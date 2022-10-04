@@ -8,9 +8,9 @@
         "target_op_src_filename": "_{data_src}_sources.yml"
     },
     "snowflake_params": {
-        "SnowflakeAccount": "<TODO>.ap-southeast-2",
-        "SnowflakeUsername": "",
-        "SnowflakePrivateKey": ""
+        "snowflake_account": "<TODO>.ap-southeast-2",
+        "snowflake_username": "",
+        "snowflake_private_key": ""
     },
     "dbt_params": {
         "dbt_version": "1.2.0",
