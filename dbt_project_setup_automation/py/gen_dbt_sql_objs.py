@@ -118,6 +118,7 @@ if __name__ == "__main__":
         raise SystemExit
     else:
         ip_jinja_template = sys.argv[1]
+        logger.debug(f"ip_jinja_template = {ip_jinja_template}")
         valid_cmd_line_inputs = {
             "snapshot": 1,
             "incremental": 2,

@@ -120,12 +120,12 @@ gen_dbt_sql_objs: get_ips
 	@echo "-------------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'snapshots' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
-	@python3 py/gen_dbt_sql_objs.py ${SUMMARY_DATA_SRC_METADATA} snapshots
+	@python3 py/gen_dbt_sql_objs.py snapshot
 	@echo "---------------------------------------------------------------"
-	@cp -r op/${DATA_SRC}/snapshots/ dbt_${DATA_SRC}/
+	@cp -r op/${DATA_SRC}/snapshot/ dbt_${DATA_SRC}/
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'incremental' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
-	@python3 py/gen_dbt_sql_objs.py ${SUMMARY_DATA_SRC_METADATA} incremental
+	@python3 py/gen_dbt_sql_objs.py incremental
 	@cp -R op/${DATA_SRC}/incremental/ dbt_${DATA_SRC}/models/rds/
 
 run_model: get_ips
