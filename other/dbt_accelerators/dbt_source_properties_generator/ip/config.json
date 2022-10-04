@@ -1,14 +1,13 @@
 {
     "DataDictionaryParams" : {
-        "ip_xls_file" : "ip/bun_data_dictionary.xlsx",
-        "xls_sheet_names_orig" : ["Orders", "Order_Line", "Customers", "PhysicalStores", "Products", "Sellers", "Promotions", "OnlineStores", "Stores"],
-        "xls_sheet_names" : ["Orders_2"],
-        "data_dic_colname" : "Attributes_ammended",
+        "ip_xls_file" : "ip/<dd>.xlsx",
+        "xls_sheet_names_orig" : [],
+        "xls_sheet_names" : [""],
+        "data_dic_colname" : "",
         "data_dic_colname_description" : "Description"
     },
     "DataSourceParams" : {
-        "env" : "DEV",
-        "division" : "BUN",
+        "env" : "dev",
         "data_src" : "eg_data_src",
         "src_db" : "eg_src_db",
         "src_db_schema" : "eg_db_schema"
