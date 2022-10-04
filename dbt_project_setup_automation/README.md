@@ -1,8 +1,10 @@
-# DBT (Project) Setup Automation
+# dbt (Project) Setup Automation
 
-Script to automate the setup steps required when initially creating a DBT project.
+Automation script(s) for dbt, namely to script:
 
-Whereby the DBT project is intended to generate all of the required files for a single, new data source.
+1) Setting up a dbt project.
+2) Generating a source properties file (`source.yml`) for each data source.
+3) Generating (dbt) SQL files in bulk either as: snapshots tables or incremental loads.
 
 ---
 
@@ -12,7 +14,7 @@ Whereby the DBT project is intended to generate all of the required files for a 
 2. Getting started
     - How-to run
     - Prerequisites
-3. DBT 'code generation workflow'
+3. dbt 'code generation workflow'
 
 ---
 
@@ -20,23 +22,23 @@ Whereby the DBT project is intended to generate all of the required files for a 
 
 A `Makefile` has been used to orchestrate the steps required to:
 
-1) Setup a DBT project.
-2) Generate a source properties file (source.yml) for each data source.
+1) Setup a dbt project.
+2) Generate a source properties file (`source.yml`) for each data source.
 3) Generate (dbt) SQL files in bulk either as: snapshots tables or incremental loads.
 
-The steps used to perform these two consist of the following:
+Whereby the steps used to perform these consist of the following:
 
-### Setup a DBT project
+### Setup a dbt project
 
-i. Initialising a DBT project, using the inputs provided in `ip/config.json` to populate Jinja template files (see `templates` dir).
+i. Initialising a dbt project, using the inputs provided in `ip/config.json` to populate Jinja template files (see `templates` dir).
 
 ii. Verifying DB connectivity, using the creds you provide (from `ip/config.json`)
 
-iii. Installing the required DBT packages (`dbt_util`, `codegen`, `dbt_expectations` & `dbt_project_evaluator`)
+iii. Installing the required dbt packages (`dbt_util`, `codegen`, `dbt_expectations` & `dbt_project_evaluator`)
 
 ### Generate a Source Properties File (source.yml)
 
-Using the python script `py/gen_source_properties.py` to generate the prerequisite DBT 'schema.yml' file, containing source details.
+Using the python script `py/gen_source_properties.py` to generate the prerequisite dbt 'schema.yml' file, containing source details.
 
 ### Generate (dbt) SQL Files in Bulk (Snapshots or Incremental Loads)
 
@@ -53,7 +55,7 @@ Using the python script `py/gen_dbt_sql_objs` to generate the `snapshot` & `incr
 
 ---
 
-## 3. DBT 'code generation workflow'
+## 3. dbt 'code generation workflow'
 
 Part of the featured functionality is to generate SQL files in bulk based upon an input data dictionary file (as such, a prerequisite to this is to provide an input data dictionary file.)
 
