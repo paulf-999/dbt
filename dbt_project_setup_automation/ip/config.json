@@ -4,7 +4,6 @@
         "data_src" : "data_src_a",
         "data_src_copy" : "ofw",
         "summary_data_src_metadata" : "ip/summary_data_src_metadata.xlsx",
-        "summary_data_src_metadata" : "ip/summary_data_src_metadata.xlsx",
         "data_src_metadata_sheet_name" : "summary_data_src_metadata",
         "target_op_src_filename": "_{data_src}_sources.yml"
     },
