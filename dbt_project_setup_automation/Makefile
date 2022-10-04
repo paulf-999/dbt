@@ -35,10 +35,12 @@ install: get_ips
 	# Step 3
 	@make -s install_packages
 	@echo
-	# Step 4
-	@make -s gen_schema_w_codegen
-	# Step 5: 'Code Generation Workflow'
+	# Step 4: 'Code Generation Workflow'
 	@make -s gen_dbt_sql_objs
+	@echo
+	# Step 5
+	@make -s gen_source_properties_file
+	@#make -s gen_schema_w_codegen
 
 get_ips:
 	@# Target: 'get_ips'. Get input args from ip/config.json
@@ -106,6 +108,7 @@ install_packages: get_ips
 	@cd ${DBT_PROJECT_NAME} && dbt deps --profiles-dir=profiles
 
 gen_schema_w_codegen: get_ips
+	# TODO: troubleshoot this
 	@echo "--------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_schema_w_codegen'. Generate the dbt schema.yml file using dbt-codegen.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "--------------------------------------------------------------------------------------"
@@ -113,6 +116,13 @@ gen_schema_w_codegen: get_ips
 	@echo -e "version: 2\n" > ${DBT_PROJECT_NAME}/models/schema.yml
 	@tail -n +5 ${DBT_PROJECT_NAME}/schema.yml >> ${DBT_PROJECT_NAME}/models/schema.yml
 	@rm ${DBT_PROJECT_NAME}/schema.yml
+
+gen_source_properties_file: get_ips
+	@echo "-----------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_source_properties_file'. Generate the dbt source.yml file.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "-----------------------------------------------------------------------"
+	@python3 py/gen_source_properties.py
+	@cp op/${DATA_SRC}/_${DATA_SRC}_sources.yml ${DBT_PROJECT_NAME}/models/rds/
 
 gen_dbt_sql_objs: get_ips
 	@echo "-------------------------------------------------------------------------------------------"
@@ -122,7 +132,8 @@ gen_dbt_sql_objs: get_ips
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py snapshot
 	@echo "---------------------------------------------------------------"
-	@cp -r op/${DATA_SRC}/snapshot/ dbt_${DATA_SRC}/
+	@rm -r dbt_${DATA_SRC}/snapshots/
+	@cp -R op/${DATA_SRC}/snapshot/ dbt_${DATA_SRC}/snapshots
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'incremental' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py incremental
