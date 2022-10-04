@@ -26,8 +26,8 @@
         "data_dic_unique_key_field" : "unique_key",
         "data_dic_updated_at_field" : "updated_at_field",
         "data_dic_accepted_values_field" : "accepted_values",
-        "data_dic_relationships_table_field" : "fk_contraint_table",
-        "data_dic_relationships_field" : "fk_contraint_key"
+        "data_dic_relationships_table_field" : "fk_constraint_table",
+        "data_dic_relationships_field" : "fk_constraint_key"
     },
     "data_src_params" : {
         "src_db" : "eg_src_db",

@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # TODO: potentially put this for loop into a function
     # extract data from each XLS sheet
     for xls_sheet_name in xls_sheet_names:
-        logger.debug(f"sheet_name = {xls_sheet_name}")
+        logger.info(f"sheet_name = {xls_sheet_name}")
 
         # extract the col_name/description pairs
         list_col_name_description_pairs = read_xls_file(data_dictionary, xls_sheet_name)
