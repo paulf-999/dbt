@@ -25,9 +25,9 @@ Scripts to:
 1. Install the prerequisites libraries by running: `make deps`.
 2. Run `make install` to:
 
-* a. Setup a dbt project & validate source DB connectivity
-* b. Generate a dbt source properties file (`source.yml`)
-* c. Generate (dbt) SQL Files in bulk (i.e., snapshots or 'incremental' [loads])
+* Setup a dbt project & validate source DB connectivity
+* Generate a dbt source properties file (`source.yml`)
+* Generate (dbt) SQL Files in bulk (i.e., snapshots or 'incremental' [loads])
 
 ### Prerequisites
 

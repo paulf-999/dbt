@@ -1,17 +1,6 @@
-#!/usr/bin/env python3
-"""
-Python Version  : 3.8
-* Name          : gen_resource_properties_file.py
-* Description   : Parses a data dictionary file to generate a dbt source.yml file
-* Created       : 15-06-2022
-* Usage         : python3 dbt_schema_generator.py
-"""
-
-__author__ = "Paul Fry"
-__version__ = "0.1"
-
-import os
 import logging
+import os
+
 import yaml
 
 # Set up a specific logger with our desired output level
@@ -39,7 +28,7 @@ def read_ip_field_mapping_data():
 
 
 ######################################################################################################
-# Functions for gen_dbt_sql_objs.py
+# Get inputs functions for gen_dbt_sql_objs.py
 ######################################################################################################
 def get_ips_for_gen_sql_objs():
     """Read input from config file. Returns shared input args used throughout the script."""
@@ -65,7 +54,7 @@ def get_ips_for_table_level_metadata():
 
 
 ######################################################################################################
-# Functions for gen_source_properties.py
+# Get inputs functions for for gen_source_properties.py
 ######################################################################################################
 def get_ips_for_src_properties():
     """Read input from config file. Returns shared input args used throughout the script."""
