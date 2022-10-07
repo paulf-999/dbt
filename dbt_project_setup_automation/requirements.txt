@@ -1,5 +1,7 @@
-jq
+j2cli
 jinja2
+jq
 openpyxl
 pandas
-j2cli
+pyyaml
+yq

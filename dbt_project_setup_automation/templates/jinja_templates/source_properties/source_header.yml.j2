@@ -2,6 +2,6 @@ version: 2
 
 sources:
   - name: {{ data_src }}
-    database: {{ src_db }}
+    database: {{ data_src }}_{{ env }}
     schema: {{ src_db_schema }}
     tables:

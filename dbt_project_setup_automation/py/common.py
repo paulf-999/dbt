@@ -17,3 +17,12 @@ jinja_env = Environment(loader=FileSystemLoader(template_dir), autoescape=True)
 
 source_template_dir = os.path.join(working_dir, "templates", "jinja_templates", "source_properties")
 jinja_env_source = Environment(loader=FileSystemLoader(source_template_dir), autoescape=True)
+
+
+def verify_dir_exists(target_dir):
+    """create the target dir if it doesn't exist"""
+    if not os.path.exists(target_dir):
+        logger.info("target_dir doesn't exist, create it")
+        os.makedirs(target_dir)
+
+    return

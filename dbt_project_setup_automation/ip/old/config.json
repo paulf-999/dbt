@@ -33,8 +33,7 @@
         "src_db" : "eg_src_db",
         "src_db_schema" : "eg_db_schema",
         "data_src_tables": {
-            "src_tables": ["table_a", "table_b"],
-            "ofw_src_tables": ["bp_rel_svw", "mzarticle_svw"]
+            "src_tables": ["table_a", "table_b"]
         }
     }
 }

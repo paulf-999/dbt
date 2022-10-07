@@ -2,7 +2,7 @@
 """
 Python Version  : 3.8
 * Name          : gen_dbt_sql_objs.py
-* Description   : Workflow generation script
+* Description   : Workflow generation script.
                 : Used to generate dbt snapshot/incremental files in batch
                 : Uses Jinja templates with input tables to generate required SQL files
 * Created       : 23-06-2022
@@ -14,128 +14,112 @@ __version__ = "0.1"
 
 import os
 import sys
-import json
 import pandas as pd
-from common import logger, working_dir, jinja_env
+from common import logger, jinja_env, verify_dir_exists
+import inputs
+import error_op
 
 
-def render_jinja_and_gen_sql():
-    """Iterate through the input tables for a division and render/generate SQL op files"""
-    logger.debug("Function called: render_jinja_and_gen_sql()")
-    for data_src, src_tables in data_src_tbls_dict.items():
-        logger.info("--------------------------------")
-        logger.info(f"data_src = {data_src}")
-        logger.info("--------------------------------")
-
-        # only fetch the tables for the targeted division
-        if data_src == data_src:
-            for src_table in src_tables:
-                # read in the CSV file to determine 'unique_key' & 'load_date_field' fields
-                unique_key, updated_at_field = read_summary_data_src_metadata(data_src, src_table)
-
-                # render the table output using this
-                # fmt: off
-                rendered_sql = jinja_env.get_template(f"{ip_jinja_template}.sql.j2").render(
-                    source_name=data_src,
-                    src_tbl_name=src_table,
-                    updated_at_field=updated_at_field,
-                    unique_key=unique_key
-                )
-                # fmt: on
-
-                target_dir = f"op/{data_src}/{ip_jinja_template}"
-
-                # make the target dir if it doesn't exist
-                if not os.path.exists(target_dir):
-                    os.makedirs(target_dir)
-
-                op_filepath = os.path.join(target_dir, f"{src_table}.sql")
-
-                with open((op_filepath), "w") as op_sql_file:
-                    op_sql_file.write(rendered_sql)
-
-    return
-
-
-def read_summary_data_src_metadata(data_src, src_table):
+def parse_data_src_summary_metadata(data_src, src_table):
     """Parse CSV data dictionary"""
-    logger.debug("Function called: read_summary_data_src_metadata()")
-    logger.info("--------------------------------")
-    logger.info(f"src_table = {src_table}")
-    logger.info("--------------------------------")
-
-    with open(os.path.join(working_dir, "ip", "config.json")) as f:
-        data = json.load(f)
-
-    summary_data_src_metadata = data["general_params"]["summary_data_src_metadata"]
-    data_src_metadata_sheet_name = data["general_params"]["data_src_metadata_sheet_name"]
+    table_level_metadata, metadata_sheet_name = inputs.get_ips_for_table_level_metadata()
 
     # read in data dictionary as df to determine 'unique_key' & 'load_date_field' fields
-    df = pd.read_excel(summary_data_src_metadata, sheet_name=data_src_metadata_sheet_name, skiprows=2).fillna("").reset_index()
-
-    # logger.info(df)
+    df = pd.read_excel(table_level_metadata, sheet_name=metadata_sheet_name, skiprows=2).fillna("").reset_index()
+    logger.debug(df)
 
     # filter data frame to only return the metadata for the table we're interested in
     df = df.loc[(df["data_src"] == data_src) & (df["table"] == src_table)]
 
-    unique_key = df["unique_key"].values[0]
+    # fetch the unique_key & updated_at_field values for this table
+    primary_key = df["primary_key"].values[0]
     updated_at_field = df["updated_at_field"].values[0]
 
-    logger.info(f"unique_key = {unique_key}")
-    logger.info(f"updated_at_field = {updated_at_field}")
+    logger.info(f"primary_key = {primary_key}\nupdated_at_field = {updated_at_field}")
 
-    return unique_key, updated_at_field
+    return primary_key, updated_at_field
 
 
-def get_ips():
-    """Read input from config file. Returns shared input args used throughout the script."""
-    logger.debug("Function called: get_ips()")
+def render_jinja(data_src, src_table, env):
+    """Iterate through the input tables for a data_src and render/generate SQL op files"""
 
-    with open(os.path.join(working_dir, "ip", "config.json")) as f:
-        data = json.load(f)
+    # read in the CSV file to determine 'unique_key' & 'load_date_field' fields
+    primary_key, updated_at_field = parse_data_src_summary_metadata(data_src, src_table)
 
-    data_src = data["general_params"]["data_src"]
+    # render the table output
+    # fmt: off
+    rendered_sql = jinja_env.get_template(f"{ip_jinja_template}.sql.j2").render(
+        src_tbl_name=src_table,
+        data_src=data_src,
+        env=env,
+        primary_key=primary_key,
+        updated_at_field=updated_at_field,
+        source_name=data_src
+    )
+    # fmt: on
 
-    data_src_tbls_dict = {}
-    data_src_tbls_dict["data_src_a"] = data["data_src_params"]["data_src_tables"]["src_tables"]
-    # data_src_tbls_dict["ofw"] = data["data_src_params"]["src_tables"]["ofw_src_tables"]
-    # data_src_tbls_dict["bun"] = data["data_src_params"]["src_tables"]["BUNSrcTables"]
-    # data_src_tbls_dict["kmt"] = data["data_src_params"]["src_tables"]["KMTSrcTables"]
-    # data_src_tbls_dict["cat"] = data["data_src_params"]["src_tables"]["CATSrcTables"]
-    # data_src_tbls_dict["tgt"] = data["data_src_params"]["src_tables"]["TGTSrcTables"]
+    return rendered_sql
 
-    return data_src, data_src_tbls_dict
+
+def generate_sql_op(data_src, src_table, rendered_sql):
+    # make the target dir if it doesn't exist
+    target_dir = f"op/{data_src}/{ip_jinja_template}"
+    verify_dir_exists(target_dir)
+
+    op_filepath = os.path.join(target_dir, f"{src_table}.sql")
+    logger.debug(f"op_filepath = {op_filepath}")
+
+    with open((op_filepath), "w") as op_sql_file:
+        op_sql_file.write(rendered_sql)
+
+    return
+
+
+def main():
+    """Main orchestration routine"""
+
+    # fetch list of data_src tables
+    env, ip_data_src, data_src_ip_tbls = inputs.get_ips_for_gen_sql_objs()
+
+    # iterate through data_src_ip_tbls
+    for data_src, src_tables in data_src_ip_tbls.items():
+        logger.info("--------------------------------")
+        logger.info(f"# data_src = {data_src}")
+        logger.info("--------------------------------")
+
+        # only fetch the tables for the targeted data_src
+        if data_src == ip_data_src:
+            for src_table in src_tables:
+                logger.info("\n################################")
+                logger.info(f"# src_table = {src_table}")
+                logger.info("################################")
+
+                # render the SQL templates for each src_table
+                rendered_sql = render_jinja(data_src, src_table, env)
+
+                # generate SQL files for each src_table
+                generate_sql_op(data_src, src_table, rendered_sql)
+
+    return
 
 
 if __name__ == "__main__":
 
     # validate user input
     if len(sys.argv) < 2:
-        logger.error("\nError: No input argument provided.\n")
-        logger.error("Usage: python3 gen_dbt_sql_objs.py <ip_jinja_template_name>\n")
-        logger.error("Available jinja templates are: 'snapshot' and 'incremental'.\n")
-        logger.error("Example: python3 gen_dbt_sql_objs.py snapshot")
-        raise SystemExit
+        # throw an error saying no inputs have been provided and exit.
+        error_op.print_no_user_input_msg()
     else:
         ip_jinja_template = sys.argv[1]
         logger.debug(f"ip_jinja_template = {ip_jinja_template}")
-        valid_cmd_line_inputs = {
-            "snapshot": 1,
-            "incremental": 2,
-        }
+        valid_cmd_line_inputs = {"snapshot": 1, "incremental": 2}
 
         try:
-            # validate cmd line input
+            # validate the user's cmd line input
             validate_cmd_line_ip = valid_cmd_line_inputs[ip_jinja_template]
-
-            # fetch list of div tables
-            data_src, data_src_tbls_dict = get_ips()
-
-            # call main routine
-            render_jinja_and_gen_sql()
-
         except KeyError:
-            logger.error(f"\nError: Invalid input argument provided: '{ip_jinja_template}'.\n")
-            logger.error("Usage: python3 gen_dbt_sql_objs.py <ip_jinja_template_name>\n")
-            logger.error("Available jinja templates are: 'snapshot' and 'incremental'.\n")
-            logger.error("Example: python3 gen_dbt_sql_objs.py snapshot")
+            # throw an error saying an incorrect input arg is provided and exit.
+            error_op.print_invalid_user_input_msg(ip_jinja_template)
+
+        # call the main orchestration routine function
+        main()

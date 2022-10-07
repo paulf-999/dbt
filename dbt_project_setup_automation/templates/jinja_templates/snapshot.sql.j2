@@ -2,9 +2,9 @@
 
 {% raw %}{{{% endraw %}
     config(
-        target_database='{{ source_name }}_hist_dev',
+        target_database='{{ snowflake_src_db }}_{{ env }}',
         target_schema='snapshot',
-        unique_key='{{ unique_key }}',
+        unique_key='{{ primary_key }}',
 
         strategy='timestamp',
         updated_at='{{ updated_at_field }}',

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Python Version  : 3.9
+Python Version  : 3.8
 * Name          : gen_source_properties.py
 * Description   : Parses a data dictionary file to generate a dbt source.yml file
 * Created       : 03-10-2022
@@ -12,8 +12,36 @@ __version__ = "0.1"
 
 import os
 import pandas as pd
-from common import logger, jinja_env_source
+from common import logger, jinja_env_source, verify_dir_exists
 import inputs
+
+
+def generate_source_properties_for_table(list_col_name_description_pairs):
+    """Generate properties using input from an XLS sheet (i.e., table)"""
+
+    # store the sum of the rendered field/comments/tests generated
+    sum_rendered_table_pairs_op = ""
+
+    for pair in list_col_name_description_pairs:
+        logger.debug(pair)
+
+        # fmt: off
+        rendered_table_pairs = jinja_env_source.get_template("source.yml.j2").render(
+            col_name=pair[0].strip(),
+            col_description=pair[1].strip(),
+            primary_key=pair[2],
+            unique=pair[3],
+            not_null=pair[4],
+            accepted_values=pair[5],
+            fk_constraint_table=pair[6],
+            fk_constraint_key=pair[7],
+        )
+        # fmt: off
+        sum_rendered_table_pairs_op += f"\n{rendered_table_pairs}"
+
+    logger.debug(sum_rendered_table_pairs_op)
+
+    return sum_rendered_table_pairs_op
 
 
 def read_xls_file(data_dictionary, xls_sheet_name):
@@ -23,7 +51,7 @@ def read_xls_file(data_dictionary, xls_sheet_name):
     Returns: list_col_name_description_pairs (list): List containing column name/description pairs
     """
 
-    col_name_field, description_field, unique_key_field, accepted_values_field, rel_table_field, rel_field = inputs.get_data_dictionary_args()
+    col_name_field, description_field, primary_key_field, unique_field, not_null_field, accepted_values_field, fk_constraint_table_field, fk_constraint_key_field = inputs.get_data_dictionary_args()  # noqa
 
     # create a data frame from the excel sheet & reset the index to iterate through the rows
     df = pd.read_excel(data_dictionary, sheet_name=xls_sheet_name, skiprows=2).fillna("").reset_index()
@@ -36,73 +64,63 @@ def read_xls_file(data_dictionary, xls_sheet_name):
         # apply some basic cleansing
         col_name = row[f"{col_name_field}"].upper()
         description = row[f"{description_field}"]
-        unique_key = row[f"{unique_key_field}"]
+        primary_key = row[f"{primary_key_field}"]
+        unique = row[f"{unique_field}"]
+        not_null = row[f"{not_null_field}"]
         accepted_values = row[f"{accepted_values_field}"]
-        relationships_table = row[f"{rel_table_field}"]
-        relationships_field = row[f"{rel_field}"]
+        fk_constraint_table = row[f"{fk_constraint_table_field}"]
+        fk_constraint_key = row[f"{fk_constraint_key_field}"]
         list_col_name_description_pairs.append(
-            [col_name, description, unique_key, accepted_values, relationships_table, relationships_field]
+            [col_name, description, primary_key, unique, not_null, accepted_values, fk_constraint_table, fk_constraint_key]
         )
         logger.debug(list_col_name_description_pairs)
 
     return list_col_name_description_pairs
 
 
-if __name__ == "__main__":
+def main():
+    """Main orchestration routine"""
 
     # fetch inputs from config file
-    data_src, src_db, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename = inputs.get_ips()
+    env, data_src, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename = inputs.get_ips_for_src_properties()
 
     # first write the 'header' of the source.yml file
     # fmt: off
     rendered_schema_header = jinja_env_source.get_template("source_header.yml.j2").render(
-        data_src=data_src, src_db=src_db, src_db_schema=src_db_schema)
+        data_src=data_src, env=env, src_db_schema=src_db_schema)
     # fmt: on
 
-    # TODO - put the folder check logic into a function
-    target_dir = f"op/{data_src}/"
-
     # make the target dir if it doesn't exist
-    if not os.path.exists(target_dir):
-        os.makedirs(target_dir)
+    target_dir = f"op/{data_src}/"
+    logger.info(f"target_dir = {target_dir}")
+    verify_dir_exists(target_dir)
 
     op_sources_file = os.path.join(target_dir, target_op_src_filename)
-
     with open((op_sources_file), "w") as op_src_file:
         op_src_file.write(f"{rendered_schema_header}\n")
 
-    # TODO: potentially put this for loop into a function
     # extract data from each XLS sheet
-    for xls_sheet_name in xls_sheet_names:
-        logger.info(f"sheet_name = {xls_sheet_name}")
+    for xls_sheet in xls_sheet_names:
 
         # extract the col_name/description pairs
-        list_col_name_description_pairs = read_xls_file(data_dictionary, xls_sheet_name)
+        list_col_name_description_pairs = read_xls_file(data_dictionary, xls_sheet)
         logger.debug(list_col_name_description_pairs)
 
+        # render the table name to the (dbt) source.yml file
+        rendered_schema_tbl = jinja_env_source.get_template("source_table.yml.j2").render(src_tbl_name=xls_sheet)
+
+        logger.info(f"generate dbt source properties for table (i.e., xls_sheet): {xls_sheet}")
         # use each col_name/description pair to generate the (dbt) source.yml file, using a jinja template
-        rendered_schema_tbl = jinja_env_source.get_template("source_table.yml.j2").render(src_tbl_name=xls_sheet_name)
+        sum_rendered_table_pairs_op = generate_source_properties_for_table(list_col_name_description_pairs)
 
-        # store the sum of the rendered field/comments generated
-        sum_rendered_table_pairs_op = ""
-
-        for pair in list_col_name_description_pairs:
-            logger.debug(pair)
-
-            # fmt: off
-            rendered_table_pairs = jinja_env_source.get_template("source.yml.j2").render(
-                col_name=pair[0].strip(),
-                col_description=pair[1].strip(),
-                unique_key_field=pair[2],
-                accepted_values_field=pair[3],
-                relationships_table_field=pair[4],
-                relationships_field=pair[5],
-            )
-            # fmt: off
-            sum_rendered_table_pairs_op += f"\n{rendered_table_pairs}"
-
-        logger.debug(sum_rendered_table_pairs_op)
-
+        # write output to (dbt) source.yml file
         with open((op_sources_file), "a+") as op_src_file:
-            op_src_file.write(f"{rendered_schema_tbl}")
-            op_src_file.write(f"{sum_rendered_table_pairs_op}\n")
+            op_src_file.write(f"{rendered_schema_tbl}{sum_rendered_table_pairs_op}\n")
+
+    return
+
+
+if __name__ == "__main__":
+
+    # call the main orchestration routine function
+    main()

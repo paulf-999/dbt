@@ -3,13 +3,13 @@
   outputs:
     dev:
       type: snowflake
-      account: {{ DBT_SNOWFLAKE_ACCOUNT }}
-      role: R_F_AIRFLOW_{{ ENV }}
+      account: {{ SNOWFLAKE_ACCOUNT }}
+      role: {{ SNOWFLAKE_ROLE }}
 
-      user: {{ DBT_SNOWFLAKE_USER }}
-      private_key_path: {{ DBT_SNOWFLAKE_PRIVATE_FILE }}
+      user: {{ SNOWFLAKE_USERNAME }}
+      private_key_path: {{ SNOWFLAKE_PRIVATE_FILE }}
 
-      database: AAC_{{ ENV }}
-      warehouse: WH_SVC_AIRFLOW_XS_{{ ENV }}
-      schema: cleaned
+      database: {{ SNOWFLAKE_DB }}
+      warehouse: {{ SNOWFLAKE_WH }}
+      schema: {{ SNOWFLAKE_SCHEMA }}
       threads: 200
