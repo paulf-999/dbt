@@ -8,7 +8,6 @@
 
         strategy='timestamp',
         updated_at='{{ updated_at_field }}',
-        -- invalidate_hard_deletes is an opt-in feature to enable invalidating hard deleted records while snapshotting the query.
         invalidate_hard_deletes=True
     )
 {% raw %}}}{% endraw %}

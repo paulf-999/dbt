@@ -1,8 +1,41 @@
+# Common credential files
 *.p8
-snowflake-rsa-key.p8
+*creds*
 
+# Private Files
+*.json
+*.csv
+*.csv.gz
+*.tsv
+*.tsv.gz
+*.xlsx
+
+# Mac/OSX
 .DS_Store
-__pycache__/
-logs/
 
-dbt_/
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+
+# Distribution / packaging
+dist/
+downloads/
+
+# Unit test / coverage reports
+.pytest_cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+*.log
+
+# Runtime data
+pids
+*.pid

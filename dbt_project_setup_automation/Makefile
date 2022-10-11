@@ -102,6 +102,7 @@ copy_templates_into_dbt_project: get_ips
 	@cp -r templates/profiles/ ${DBT_PROJECT_NAME}/profiles/
 	@cp -r templates/target/ ${DBT_PROJECT_NAME}/target/
 	@cp -r templates/tmp/ ${DBT_PROJECT_NAME}/tmp/
+	@cp -r templates/logs/ ${DBT_PROJECT_NAME}/logs/
 	@cp -r templates/style_guides/ ${DBT_PROJECT_NAME}/style_guides/
 	@cp templates/packages.yml ${DBT_PROJECT_NAME}
 

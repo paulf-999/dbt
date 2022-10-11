@@ -8,7 +8,7 @@
 -- * count (int): minimum number of rows expected in source
 -- * where_clause (string - optional): Optional filter on the data. Wrap the entire clause in double quotes.
 
-{% test source_rowcount(source_name, table, count, where_clause=None) %}
+{% macro source_rowcount(source_name, table, count, where_clause=None) %}
 
 WITH source AS (
     SELECT *

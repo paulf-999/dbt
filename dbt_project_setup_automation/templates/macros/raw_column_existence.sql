@@ -4,7 +4,7 @@
 -- * table_list (list): list of tables referenced
 -- * column_list: list of columns referenced
 
-{% test raw_column_existence(schema, table, column_list) %}
+{% macro raw_column_existence(schema, table, column_list) %}
 
 WITH source AS (
     SELECT *
@@ -13,22 +13,13 @@ WITH source AS (
 , counts AS (
     SELECT COUNT(1) AS row_count
     FROM source
-    WHERE LOWER(table_schema) = '{{schema|lower}}'
-        AND LOWER(table_name) = '{{table|lower}}'
+    WHERE LOWER(table_schema) = '{{ schema|lower }}'
+        AND LOWER(table_name) = '{{ table|lower }}'
         AND LOWER(column_name) IN (
-            {%- for column IN column_list -%}
-                '{{column|lower}}'{% IF NOT loop.last %},{%- endif -%}
+            {%- for column in column_list -%}
+                '{{ column|lower }}'{% if not loop.last %},{%- endif -%}
             {%- endfor -%}
         )
-)
-
-SELECT row_count
-FROM counts
-WHERE row_count < array_size(array_construct(
-        {%- for column IN column_list -%}
-            '{{column|lower}}'{% IF NOT loop.last %},{%- endif -%}
-        {%- endfor -%}
-    )
 )
 
 {% endmacro %}
