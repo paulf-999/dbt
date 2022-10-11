@@ -41,7 +41,7 @@ In addition, for a breakdown of each of the input args used for the data diction
 
 A `Makefile` has been used to orchestrate the steps required to set up a dbt project. Whereby this dbt project also bundles in commonly used dbt packages, macros and templates to ensure best practice naming/structures are followed . The orchestration steps consist of:
 
-### 1. Automation the dbt Project Setup
+### i. Automation the dbt Project Setup
 
 * See `init_dbt_project` in the `Makefile`.
 * This step automates the creation of a dbt project using inputs provided in `ip/config.yaml` to populate Jinja templates (see `templates` dir), as well as:
@@ -52,7 +52,7 @@ A `Makefile` has been used to orchestrate the steps required to set up a dbt pro
 
   * Include additional dbt macros, e.g.: `generate_schema_name`, as well as macros used for DQ testing.
 
-### 2. Generating the dbt 'source properties' file (`_source.yml`)
+### ii. Generating the dbt 'source properties' file (`_source.yml`)
 
 * See `gen_source_properties_file` in the `Makefile`.
 * This step automates the creation of the dbt source properties file (i.e., `_source.yml`) for each data source, using the python script `py/gen_source_properties.py`.
@@ -64,7 +64,7 @@ A `Makefile` has been used to orchestrate the steps required to set up a dbt pro
     * Accepted values
     * Relationship constraints
 
-### 3) Generating dbt SQL objects in bulk
+### iii. Generating dbt SQL objects in bulk
 
 * See `gen_dbt_sql_objs` in the `Makefile`.
 * This steps automates generatating (dbt) SQL files in bulk (either as: `snapshot` or `incremental [load]` SQL files) using Jinja templates. It does this using the python script `py/gen_dbt_sql_objs.py`.
