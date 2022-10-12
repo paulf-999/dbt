@@ -83,16 +83,16 @@ def main():
 
     # iterate through data_src_ip_tbls
     for data_src, src_tables in data_src_ip_tbls.items():
-        logger.info("--------------------------------")
-        logger.info(f"# data_src = {data_src}")
-        logger.info("--------------------------------")
+        logger.debug("--------------------------------")
+        logger.debug(f"# data_src = {data_src}")
+        logger.debug("--------------------------------")
 
         # only fetch the tables for the targeted data_src
         if data_src == ip_data_src:
             for src_table in src_tables:
-                logger.info("\n################################")
-                logger.info(f"# src_table = {src_table}")
-                logger.info("################################")
+                logger.debug("\n################################")
+                logger.debug(f"# src_table = {src_table}")
+                logger.debug("################################")
 
                 # render the SQL templates for each src_table
                 rendered_sql = render_jinja(data_src, src_table, env)

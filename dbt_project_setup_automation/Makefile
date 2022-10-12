@@ -81,7 +81,7 @@ init_dbt_project: get_ips
 	# Step 1: Initialise the dbt project. dbt project name = '${DBT_PROJECT_NAME}'.
 	@echo
 	dbt init ${DBT_PROJECT_NAME} --skip-profile-setup
-	@# Step 2: copy profiles, macros & prereq dirs into dbt project folder
+	# Step 2: copy profiles, macros & prereq dirs into dbt project folder
 	@make -s copy_templates_into_dbt_project
 	@echo
 	# Step 3: Generate the profiles.yml file
@@ -92,8 +92,9 @@ init_dbt_project: get_ips
 	@echo
 	@j2 templates/jinja_templates/dbt_project_ingestion_layer.yml.j2 -o ${DBT_PROJECT_NAME}/dbt_project.yml
 	# Step 5: create a folder in the dbt project for the target model
-	@mkdir ${DBT_PROJECT_NAME}/models/${DBT_MODEL}
-	# Step 6: Change permissions of the dbt project folder, otherwise you run into perms issues, re: logs
+	@echo
+	@mkdir ${DBT_PROJECT_NAME}/models/${DATA_SRC}_${DBT_MODEL}
+	# Step 6: Change permissions of the dbt project folder, otherwise you run into perms issues, re: the logs/ & target/ folders
 	@chmod -R 777 ${DBT_PROJECT_NAME}
 
 copy_templates_into_dbt_project: get_ips
@@ -122,19 +123,13 @@ install_packages: get_ips
 	@echo "------------------------------------------------------------------"
 	@cd ${DBT_PROJECT_NAME} && dbt deps --profiles-dir=profiles
 
-gen_dbt_sql_objs: get_ips
-	@echo "-------------------------------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_dbt_sql_objs'. Generate snapshot/incremental .sql files using Jinja templates.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "-------------------------------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'snapshots' layer.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "---------------------------------------------------------------"
-	@python3 py/gen_dbt_sql_objs.py snapshot
-	@echo "---------------------------------------------------------------"
-	@cp -R op/${DATA_SRC}/snapshot/*.sql dbt_${DATA_SRC}/snapshots/
-	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'incremental' layer.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "---------------------------------------------------------------"
-	@python3 py/gen_dbt_sql_objs.py incremental
-	@cp -R op/${DATA_SRC}/incremental/*.sql dbt_${DATA_SRC}/models/rds/
+gen_source_properties_file: get_ips
+	@echo "-----------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_source_properties_file'. Generate the dbt source.yml (source properties) file.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "-----------------------------------------------------------------------"
+	@python3 py/gen_source_properties.py
+	@# create dir if not exists
+	@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/${DATA_SRC}_rds/
 
 gen_schema_w_codegen: get_ips
 	# TODO: troubleshoot this
@@ -146,13 +141,20 @@ gen_schema_w_codegen: get_ips
 	@tail -n +5 ${DBT_PROJECT_NAME}/schema.yml >> ${DBT_PROJECT_NAME}/models/schema.yml
 	@rm ${DBT_PROJECT_NAME}/schema.yml
 
-gen_source_properties_file: get_ips
-	@echo "-----------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_source_properties_file'. Generate the dbt source.yml (source properties) file.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "-----------------------------------------------------------------------"
-	@python3 py/gen_source_properties.py
-	# create dir if not exists
-	@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/rds/
+gen_dbt_sql_objs: get_ips
+	@echo "-------------------------------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_dbt_sql_objs'. Generate snapshot/incremental .sql files using Jinja templates.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "-------------------------------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'snapshots' layer.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "---------------------------------------------------------------"
+	@python3 py/gen_dbt_sql_objs.py snapshot
+	@echo "---------------------------------------------------------------"
+	@mkdir ${DBT_PROJECT_NAME}/snapshots/${DATA_SRC}/
+	@cp -R op/${DATA_SRC}/snapshot/*.sql ${DBT_PROJECT_NAME}/snapshots/${DATA_SRC}
+	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'incremental' layer.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "---------------------------------------------------------------"
+	@python3 py/gen_dbt_sql_objs.py incremental
+	@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/${DATA_SRC}rds/
 
 run_model: get_ips
 	@echo "------------------------------------------------------------------"

@@ -12,6 +12,8 @@
     )
 {% raw %}}}{% endraw %}
 
+-- note: 'invalidate_hard_deletes' is a dbt opt-in feature to enable invalidating hard deleted records, when performing the snapshot query.
+
 SELECT *
 FROM {% raw %}{{{% endraw %} source('{{ source_name }}', '{{ src_tbl_name }}') {% raw %}}}{% endraw %}
 LIMIT 5

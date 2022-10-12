@@ -92,7 +92,7 @@ def main():
 
     # make the target dir if it doesn't exist
     target_dir = f"op/{data_src}/"
-    logger.info(f"target_dir = {target_dir}")
+    logger.debug(f"target_dir = {target_dir}")
     verify_dir_exists(target_dir)
 
     op_sources_file = os.path.join(target_dir, target_op_src_filename)
@@ -109,7 +109,7 @@ def main():
         # render the table name to the (dbt) source.yml file
         rendered_schema_tbl = jinja_env_source.get_template("source_table.yml.j2").render(src_tbl_name=xls_sheet)
 
-        logger.info(f"generate dbt source properties for table (i.e., xls_sheet): {xls_sheet}")
+        logger.info(f"generate dbt source properties for table: {xls_sheet}")
         # use each col_name/description pair to generate the (dbt) source.yml file, using a jinja template
         sum_rendered_table_pairs_op = generate_source_properties_for_table(list_col_name_description_pairs)
 
