@@ -1,10 +1,12 @@
+# CTE Styleguide
+
 `with`
 
-# Import CTEs
+## Import CTEs
 
 These should be 'base queries', initially referencing your source table for later use:
 
-```
+```sql
 base_orders as (
 
     SELECT *
@@ -17,11 +19,11 @@ base_customers as (
 ),
 ```
 
-# Logical CTEs
+## Logical CTEs
 
 Use logical CTEs to perform some preparation/transforms on the base tables.
 
-```
+```sql
 customers as (
 
     -- perform some preparation/transforms on base_customers
@@ -37,21 +39,21 @@ orders as (
 )
 ```
 
-# Final CTE
+## Final CTE
 
 Join together your logical CTEs:
 
-```
+```sql
 final_cte as (
     -- join together orders and customers
 )
 ```
 
-# Simple Select Statement
+## Simple Select Statement
 
 Perform your final SELECT statement:
 
-```
+```sql
 SELECT *
 FROM final_cte
 ```

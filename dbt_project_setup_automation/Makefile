@@ -81,6 +81,7 @@ init_dbt_project: get_ips
 	# Step 1: Initialise the dbt project. dbt project name = '${DBT_PROJECT_NAME}'.
 	@echo
 	dbt init ${DBT_PROJECT_NAME} --skip-profile-setup
+	@echo
 	# Step 2: copy profiles, macros & prereq dirs into dbt project folder
 	@make -s copy_templates_into_dbt_project
 	@echo
@@ -90,21 +91,23 @@ init_dbt_project: get_ips
 	@rm -r ${DBT_PROJECT_NAME}/models/example
 	# Step 4: Setup the dbt_project.yml file
 	@echo
-	@j2 templates/jinja_templates/dbt_project_ingestion_layer.yml.j2 -o ${DBT_PROJECT_NAME}/dbt_project.yml
+	@j2 templates/jinja_templates/dbt_project.yml.j2 -o ${DBT_PROJECT_NAME}/dbt_project.yml
 	# Step 5: create a folder in the dbt project for the target model
 	@echo
 	@mkdir ${DBT_PROJECT_NAME}/models/${DATA_SRC}_${DBT_MODEL}
-	# Step 6: Change permissions of the dbt project folder, otherwise you run into perms issues, re: the logs/ & target/ folders
+	@echo
+	# TODO - render the templates/jina_templates/models here
+	@echo
+	# Step 6: Change permissions of the dbt project folder. Otherwise you run into perms issues with the logs/ & target/ folders
 	@chmod -R 777 ${DBT_PROJECT_NAME}
 
 copy_templates_into_dbt_project: get_ips
-	@cp -r templates/docs/ ${DBT_PROJECT_NAME}/docs/
-	@cp -r templates/macros/ ${DBT_PROJECT_NAME}/
-	@cp -r templates/profiles/ ${DBT_PROJECT_NAME}/profiles/
-	@cp -r templates/target/ ${DBT_PROJECT_NAME}/target/
-	@cp -r templates/tmp/ ${DBT_PROJECT_NAME}/tmp/
-	@cp -r templates/logs/ ${DBT_PROJECT_NAME}/logs/
-	@cp -r templates/style_guides/ ${DBT_PROJECT_NAME}/style_guides/
+	@cp -r templates/template_dirs/docs/ ${DBT_PROJECT_NAME}/docs/
+	@cp -r templates/template_dirs/logs/ ${DBT_PROJECT_NAME}/logs/
+	@cp -r templates/template_dirs/macros/ ${DBT_PROJECT_NAME}/
+	@cp -r templates/template_dirs/profiles/ ${DBT_PROJECT_NAME}/profiles/
+	@cp -r templates/template_dirs/style_guides/ ${DBT_PROJECT_NAME}/style_guides/
+	@cp -r templates/template_dirs/target/ ${DBT_PROJECT_NAME}/target/
 	@cp templates/packages.yml ${DBT_PROJECT_NAME}
 
 #############################################################################################

@@ -1,37 +1,39 @@
 # Git guide
-The goal of this guide is twofold:
-1. Improve consistency when multiple analysts are working on a codebase; and
-2. Provide a framework that decreases the number of decisions that need to be
-made
 
+The goal of this guide is twofold:
+
+1. Improve consistency when multiple analysts are working on a codebase; and
+2. Provide a framework that decreases the number of decisions that need to be made
 
 ## Git branches
-Git branches should:
-* be named as follows:
-  * feature/name-of-feature
-  * fix/name-of-fix
-  * refactor/name-of-refactor
+
+Git branches should be named as follows:
+
+* `feature/name-of-feature`
+* `fix/name-of-fixs`
+* `refactor/name-of-refactor`
 
 ## Commits
+
 Commits should:
+
 * have a message in the imperative sense – a good way to frame this tense is to
   finish the sentence "this commit will ...". For example:
   * Add MRR models
   * Fix typo in sessions model description
   * Update schema to v2 schema syntax
   * Upgrade project to dbt v0.13.0
-* happen early and often! As soon as a piece of your code works, commit it! This
-  means that if (/when), down the line, you introduce bad code, you can easily
-  take your code back to the state it was in when it worked.
+* happen early and often! As soon as a piece of your code works, commit it! This means that if (/when), down the line, you introduce bad code, you can easily take your code back to the state it was in when it worked.
 
 Commits can:
-* be squashed on a local branch before being  pushed to your remote branch, if
-  you feel comfortable doing this.
+
+* be squashed on a local branch before being  pushed to your remote branch, if you feel comfortable doing this.
 
 ## Pull requests
+
 Pull requests should:
-* tackle a functional grouping of work. While it may be tempting to (for
-  example) build MRR models _and_ add maintenance jobs in a single PR, these
+
+* tackle a functional grouping of work. While it may be tempting to (for example) build MRR models _and_ add maintenance jobs in a single PR, these
   should be separate pieces of work.
 * include a body that explains the context of the changes to the code, as well
   as what the code does. Useful things to include in a PR are:
@@ -52,5 +54,5 @@ Pull requests should:
   * all tests have passed
 
 Pull requests can:
-* be used to collaborate on code, as they are a great way to share the code
-  you've written so far. In this scenario, use a _draft_ pull request.
+
+* be used to collaborate on code, as they are a great way to share the code you've written so far. In this scenario, use a _draft_ pull request.
