@@ -52,7 +52,8 @@ def get_ips_for_gen_sql_objs():
 
     # data_src table specific key/values
     data_src_ip_tbls = {}
-    data_src_ip_tbls["data_src_a"] = data["general_params"]["data_src_tables"]["data_src_a_tbls"]
+    # TODO - the input for this would need to be manually changed
+    data_src_ip_tbls["data_src_a"] = data["general_params"]["data_src_tables"]["data_src_a_src_tables"]
 
     return env, ip_data_src, data_src_ip_tbls
 

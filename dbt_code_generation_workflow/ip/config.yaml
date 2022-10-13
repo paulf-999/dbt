@@ -16,7 +16,7 @@ db_connection_params:
   snowflake_src_db_schema: # landed
 dbt_params:
   dbt_version: 1.2.0
-  dbt_project_name: # e.g., dbt_${DATA_SRC} # name of the dbt project. Must be snake_case, i.e., letters, digits and underscores only, and cannot start with a digit.
+  dbt_project_name: sdw # e.g., dbt_${DATA_SRC} # name of the dbt project. Must be snake_case, i.e., letters, digits and underscores only, and cannot start with a digit.
   dbt_profile_name: eg_company # The profile your dbt project should use to connect to your data warehouse, must be snake_case.
   # Recommendation, re dbt_profile_name: Often an organisation has only one data warehouse, so it makes sense to use your organisation's name as a profile name.
   dbt_model: staging # target data model to land the generated SQL files

@@ -15,7 +15,7 @@ working_dir = os.getcwd()
 template_dir = os.path.join(working_dir, "templates", "jinja_templates")
 jinja_env = Environment(loader=FileSystemLoader(template_dir), autoescape=True)
 
-source_template_dir = os.path.join(working_dir, "templates", "jinja_templates", "source_properties")
+source_template_dir = os.path.join(working_dir, "templates", "jinja_templates", "src_properties_generator")
 jinja_env_source = Environment(loader=FileSystemLoader(source_template_dir), autoescape=True)
 
 

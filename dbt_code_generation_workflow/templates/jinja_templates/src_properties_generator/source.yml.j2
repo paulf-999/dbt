@@ -1,5 +1,3 @@
-          {%- if col_name != '' %}
-          columns:
           - name: {{ col_name }}
             {#- |safe is used to instruct jinja to render description directly #}
             description: "{{ col_description|safe }}"
@@ -84,5 +82,3 @@
                   field: {{ fk_constraint_key }}
             {%- endif -%}
             {#- close 5. check 'fk_constraint_table' combinations #}
-          {%- endif -%}
-          {# close 'if col_name != ' #}
