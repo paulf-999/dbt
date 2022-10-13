@@ -28,10 +28,23 @@ def read_ip_field_mapping_data():
 
 
 ######################################################################################################
+# Get inputs functions for gen_dbt_model_directory.py
+######################################################################################################
+def get_ips_for_gen_dbt_model_directory():
+    """Read input from config file for gen_dbt_model_directory.py"""
+
+    data = read_ip_config_file()
+    data_src = data["general_params"]["data_src"]
+    dbt_project_name = data["dbt_params"]["dbt_project_name"]
+
+    return data_src, dbt_project_name
+
+
+######################################################################################################
 # Get inputs functions for gen_dbt_sql_objs.py
 ######################################################################################################
 def get_ips_for_gen_sql_objs():
-    """Read input from config file. Returns shared input args used throughout the script."""
+    """Read input from config file for gen_dbt_sql_objs.py"""
 
     data = read_ip_config_file()
     env = data["general_params"]["env"]
@@ -57,7 +70,7 @@ def get_ips_for_table_level_metadata():
 # Get inputs functions for for gen_source_properties.py
 ######################################################################################################
 def get_ips_for_src_properties():
-    """Read input from config file. Returns shared input args used throughout the script."""
+    """Read input from config file for gen_source_properties.py"""
     data = read_ip_config_file()
 
     field_mapping_data = read_ip_field_mapping_data()

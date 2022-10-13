@@ -88,15 +88,13 @@ init_dbt_project: get_ips
 	# Step 3: Generate the profiles.yml file
 	@echo
 	@j2 ${DBT_PROJECT_NAME}/profiles/profiles.yml.j2 -o ${DBT_PROJECT_NAME}/profiles/profiles.yml
-	@rm -r ${DBT_PROJECT_NAME}/models/example
+	@rm -r ${DBT_PROJECT_NAME}/models/example && rm ${DBT_PROJECT_NAME}/README.md
 	# Step 4: Setup the dbt_project.yml file
 	@echo
 	@j2 templates/jinja_templates/dbt_project.yml.j2 -o ${DBT_PROJECT_NAME}/dbt_project.yml
-	# Step 5: create a folder in the dbt project for the target model
+	# Step 5: rename files/folders in the dbt models directory
 	@echo
-	@mkdir ${DBT_PROJECT_NAME}/models/${DATA_SRC}_${DBT_MODEL}
-	@echo
-	# TODO - render the templates/jina_templates/models here
+	@python3 py/gen_dbt_model_directory.py
 	@echo
 	# Step 6: Change permissions of the dbt project folder. Otherwise you run into perms issues with the logs/ & target/ folders
 	@chmod -R 777 ${DBT_PROJECT_NAME}
@@ -104,10 +102,12 @@ init_dbt_project: get_ips
 copy_templates_into_dbt_project: get_ips
 	@cp -r templates/template_dirs/docs/ ${DBT_PROJECT_NAME}/docs/
 	@cp -r templates/template_dirs/logs/ ${DBT_PROJECT_NAME}/logs/
-	@cp -r templates/template_dirs/macros/ ${DBT_PROJECT_NAME}/
+	@cp -r templates/template_dirs/macros/ ${DBT_PROJECT_NAME}/macros/
+	@cp -r templates/template_dirs/models/ ${DBT_PROJECT_NAME}/models/
 	@cp -r templates/template_dirs/profiles/ ${DBT_PROJECT_NAME}/profiles/
 	@cp -r templates/template_dirs/style_guides/ ${DBT_PROJECT_NAME}/style_guides/
 	@cp -r templates/template_dirs/target/ ${DBT_PROJECT_NAME}/target/
+	@cp -r templates/template_dirs/tests/ ${DBT_PROJECT_NAME}/tests/
 	@cp templates/packages.yml ${DBT_PROJECT_NAME}
 
 #############################################################################################
@@ -150,7 +150,7 @@ gen_dbt_sql_objs: get_ips
 	@echo "-------------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'snapshots' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
-	@python3 py/gen_dbt_sql_objs.py snapshot
+	#@python3 py/gen_dbt_sql_objs.py snapshot
 	@echo "---------------------------------------------------------------"
 	@mkdir ${DBT_PROJECT_NAME}/snapshots/${DATA_SRC}/
 	@cp -R op/${DATA_SRC}/snapshot/*.sql ${DBT_PROJECT_NAME}/snapshots/${DATA_SRC}
