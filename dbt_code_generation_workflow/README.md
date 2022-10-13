@@ -5,6 +5,8 @@ Scripts to:
 * Automate the dbt project setup process.
 * Generate prerequisite (dbt) SQL and yaml files in bulk.
 
+See `example_dbt_project` for an example of the generated dbt project files.
+
 ---
 
 ## Contents

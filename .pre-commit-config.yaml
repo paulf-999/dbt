@@ -6,7 +6,6 @@ repos:
     hooks:
     -   id: check-added-large-files # prevents giant files from being committed.
     -   id: check-json # checks json files for parseable syntax.
-    -   id: check-yaml # checks yaml files for parseable syntax.
     -   id: check-merge-conflict # checks for files that contain merge conflict strings.
     -   id: debug-statements # checks for debugger imports and py37+ `breakpoint()` calls in python source.
     -   id: end-of-file-fixer # ensures that a file is either empty, or ends with one newline.
@@ -31,14 +30,6 @@ repos:
     hooks:
     -   id: pyupgrade # Automatically upgrade syntax for newer versions
         args: [--py36-plus]
-
--   repo: https://github.com/sqlfluff/sqlfluff
-    rev: 1.3.1
-    hooks:
-    -   id: sqlfluff-lint # Lints sql files with `SQLFluff`
-        args: [--dialect, "snowflake"]
-        additional_dependencies: ['dbt-snowflake', 'sqlfluff-templater-dbt']
-        # files: 'TODO'
 
 -   repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 3.0.0

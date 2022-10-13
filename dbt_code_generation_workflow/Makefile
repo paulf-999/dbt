@@ -32,9 +32,8 @@ install: get_ips
 	# Step 2: Initialise the dbt project
 	@make -s init_dbt_project
 	@echo
-	# TODO - uncomment the below
 	# Step 3: Verify connection to the source DB
-	#@make -s validate_db_connection
+	@make -s validate_db_connection
 	@echo
 	# Step 4: Install the desired dbt packages
 	@make -s install_packages
@@ -84,6 +83,8 @@ init_dbt_project: get_ips
 	dbt init ${DBT_PROJECT_NAME} --skip-profile-setup
 	@echo
 	# Step 2: copy profiles, macros & prereq dirs into dbt project folder
+	# TODO - delete the 2 lines below
+	@mkdir ${DBT_PROJECT_NAME}/models/${DBT_MODEL}
 	@mkdir ${DBT_PROJECT_NAME}/models/integration
 	@make -s copy_templates_into_dbt_project
 	@echo
@@ -96,8 +97,6 @@ init_dbt_project: get_ips
 	@j2 templates/jinja_templates/dbt_project.yml.j2 -o ${DBT_PROJECT_NAME}/dbt_project.yml
 	# Step 5: rename files/folders in the dbt models directory
 	@python3 py/gen_dbt_model_directory.py
-	# NOTE - the line below is bespoke
-	@mkdir ${DBT_PROJECT_NAME}/models/${DBT_MODEL}
 	@echo
 	# Step 6: Change permissions of the dbt project folder. Otherwise you run into perms issues with the logs/ & target/ folders
 	@chmod -R 777 ${DBT_PROJECT_NAME}
@@ -107,7 +106,7 @@ copy_templates_into_dbt_project: get_ips
 	@cp -r templates/template_dirs/logs/ ${DBT_PROJECT_NAME}/logs/
 	@cp -r templates/template_dirs/macros/ ${DBT_PROJECT_NAME}/macros/
 	# TODO - remove integration from the below
-	@cp -r templates/template_dirs/models/ ${DBT_PROJECT_NAME}/models/integration/
+	@cp -r templates/template_dirs/models/ ${DBT_PROJECT_NAME}/models/integration
 	@cp -r templates/template_dirs/profiles/ ${DBT_PROJECT_NAME}/profiles/
 	@cp -r templates/template_dirs/style_guides/ ${DBT_PROJECT_NAME}/style_guides/
 	@cp -r templates/template_dirs/target/ ${DBT_PROJECT_NAME}/target/
@@ -136,7 +135,9 @@ gen_source_properties_file: get_ips
 	@echo "-----------------------------------------------------------------------"
 	@python3 py/gen_source_properties.py
 	@# create dir if not exists
-	@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/data_ingestion/
+	#@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/${DBT_MODEL}/
+	#TODO - uncomment the below & then delete the above
+	@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
 
 gen_schema_w_codegen: get_ips
 	# TODO: troubleshoot this
@@ -161,7 +162,9 @@ gen_dbt_sql_objs: get_ips
 	@echo -e "${COLOUR_TXT_FMT_OPENING}# Generate sql for the 'incremental' layer.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "---------------------------------------------------------------"
 	@python3 py/gen_dbt_sql_objs.py incremental
-	@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/${DBT_MODEL}
+	@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
+	#TODO - uncomment the below & then delete the above
+	#@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/${DBT_MODEL}
 
 run_model: get_ips
 	@echo "------------------------------------------------------------------"
