@@ -51,7 +51,7 @@ def read_xls_file(data_dictionary, xls_sheet_name):
     Returns: list_col_name_description_pairs (list): List containing column name/description pairs
     """
 
-    col_name_field, description_field, primary_key_field, unique_field, not_null_field, accepted_values_field, fk_constraint_table_field, fk_constraint_key_field = inputs.get_data_dictionary_args()  # noqa
+    col_name_field, description_field, primary_key_field, created_at_field, updated_at_field, unique_field, not_null_field, accepted_values_field, fk_constraint_table_field, fk_constraint_key_field = inputs.get_data_dictionary_args()  # noqa
 
     # create a data frame from the excel sheet & reset the index to iterate through the rows
     df = pd.read_excel(data_dictionary, sheet_name=xls_sheet_name, skiprows=2).fillna("").reset_index()
@@ -65,13 +65,15 @@ def read_xls_file(data_dictionary, xls_sheet_name):
         col_name = row[f"{col_name_field}"].upper()
         description = row[f"{description_field}"]
         primary_key = row[f"{primary_key_field}"]
+        created_at = row[f"{created_at_field}"]
+        updated_at = row[f"{updated_at_field}"]
         unique = row[f"{unique_field}"]
         not_null = row[f"{not_null_field}"]
         accepted_values = row[f"{accepted_values_field}"]
         fk_constraint_table = row[f"{fk_constraint_table_field}"]
         fk_constraint_key = row[f"{fk_constraint_key_field}"]
         list_col_name_description_pairs.append(
-            [col_name, description, primary_key, unique, not_null, accepted_values, fk_constraint_table, fk_constraint_key]
+            [col_name, description, primary_key, created_at, updated_at, unique, not_null, accepted_values, fk_constraint_table, fk_constraint_key]
         )
         logger.debug(list_col_name_description_pairs)
 

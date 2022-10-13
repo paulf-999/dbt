@@ -33,18 +33,19 @@ def parse_data_src_summary_metadata(data_src, src_table):
 
     # fetch the unique_key & updated_at_field values for this table
     primary_key = df["primary_key"].values[0]
+    created_at_field = df["created_at_field"].values[0]
     updated_at_field = df["updated_at_field"].values[0]
 
     logger.info(f"primary_key = {primary_key}\nupdated_at_field = {updated_at_field}")
 
-    return primary_key, updated_at_field
+    return primary_key, created_at_field, updated_at_field
 
 
 def render_jinja(data_src, src_table, env):
     """Iterate through the input tables for a data_src and render/generate SQL op files"""
 
     # read in the CSV file to determine 'unique_key' & 'load_date_field' fields
-    primary_key, updated_at_field = parse_data_src_summary_metadata(data_src, src_table)
+    primary_key, created_at_field, updated_at_field = parse_data_src_summary_metadata(data_src, src_table)
 
     # render the table output
     # fmt: off
@@ -53,6 +54,7 @@ def render_jinja(data_src, src_table, env):
         data_src=data_src,
         env=env,
         primary_key=primary_key,
+        created_at=created_at_field,
         updated_at_field=updated_at_field,
         source_name=data_src
     )

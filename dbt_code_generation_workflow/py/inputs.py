@@ -102,10 +102,12 @@ def get_data_dictionary_args():
     col_name_field = field_mapping_data["field_name_mappings"]["data_dic_col_name_field"]
     description_field = field_mapping_data["field_name_mappings"]["data_dic_descrip_field"]
     primary_key_field = field_mapping_data["field_name_mappings"]["data_dic_primary_key_field"]
+    created_at_field = field_mapping_data["field_name_mappings"]["data_dic_created_at_field"]
+    updated_at_field = field_mapping_data["field_name_mappings"]["data_dic_updated_at_field"]
     unique_field = field_mapping_data["field_name_mappings"]["data_dic_unique_field"]
     not_null_field = field_mapping_data["field_name_mappings"]["data_dic_not_null_field"]
     accepted_values_field = field_mapping_data["field_name_mappings"]["data_dic_accepted_values_field"]
     fk_constraint_table_field = field_mapping_data["field_name_mappings"]["data_dic_fk_constraint_table_field"]
     fk_constraint_key_field = field_mapping_data["field_name_mappings"]["data_dic_fk_constraint_key_field"]
 
-    return col_name_field, description_field, primary_key_field, unique_field, not_null_field, accepted_values_field, fk_constraint_table_field, fk_constraint_key_field  # noqa
+    return col_name_field, description_field, primary_key_field, created_at_field, updated_at_field, unique_field, not_null_field, accepted_values_field, fk_constraint_table_field, fk_constraint_key_field  # noqa
