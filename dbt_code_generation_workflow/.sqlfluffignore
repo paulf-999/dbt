@@ -1,1 +1,2 @@
 is_table_empty.sql
+example_generated_dbt_project/*.sql

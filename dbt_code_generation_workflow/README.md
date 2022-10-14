@@ -7,7 +7,7 @@ Scripts to:
 * Generate dbt resource property (.yml) files.
 * Ensure the file/folder structure follows best practices from the off.
 
-See `example_dbt_project` for an example of the generated dbt project files.
+See `example_generated_dbt_project` for an example of the generated dbt project files.
 
 ---
 
