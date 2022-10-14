@@ -61,7 +61,8 @@ def read_xls_file(data_dictionary, xls_sheet_name):
     list_col_name_description_pairs = []
 
     for index, row in df.iterrows():
-        # apply some basic cleansing
+
+        # store column values in dedicated vars
         col_name = row[f"{col_name_field}"].upper()
         description = row[f"{description_field}"]
         primary_key = row[f"{primary_key_field}"]
@@ -72,6 +73,8 @@ def read_xls_file(data_dictionary, xls_sheet_name):
         accepted_values = row[f"{accepted_values_field}"]
         fk_constraint_table = row[f"{fk_constraint_table_field}"]
         fk_constraint_key = row[f"{fk_constraint_key_field}"]
+
+        # add this row's contents as a set to the list
         list_col_name_description_pairs.append(
             [col_name, description, primary_key, created_at, updated_at, unique, not_null, accepted_values, fk_constraint_table, fk_constraint_key]
         )
@@ -83,7 +86,7 @@ def read_xls_file(data_dictionary, xls_sheet_name):
 def main():
     """Main orchestration routine"""
 
-    # fetch inputs from config file
+    # fetch inputs from the config file
     env, data_src, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename = inputs.get_ips_for_src_properties()
 
     # first write the 'header' of the source.yml file
@@ -97,32 +100,38 @@ def main():
     logger.debug(f"target_dir = {target_dir}")
     verify_dir_exists(target_dir)
 
+    # setup the file path for the op_file
     op_sources_file = os.path.join(target_dir, target_op_src_filename)
+
     with open((op_sources_file), "w") as op_src_file:
         op_src_file.write(f"{rendered_schema_header}\n")
 
     # extract data from each XLS sheet
     for xls_sheet in xls_sheet_names:
 
-        # extract the col_name/description pairs
+        # create a column name/description paris and store these in a list
         list_col_name_description_pairs = read_xls_file(data_dictionary, xls_sheet)
         logger.debug(list_col_name_description_pairs)
 
         # render the table name to the (dbt) source.yml file
         rendered_schema_tbl = jinja_env_source.get_template("source_table.yml.j2").render(src_tbl_name=xls_sheet)
 
-        logger.info(f"generate dbt source properties for table: {xls_sheet}")
+        logger.info(f"generate dbt source properties for the table: {xls_sheet}")
+
         # use each col_name/description pair to generate the (dbt) source.yml file, using a jinja template
         sum_rendered_table_pairs_op = generate_source_properties_for_table(list_col_name_description_pairs)
 
-        # write output to (dbt) source.yml file
+        # write the output to (dbt) source.yml file
         with open((op_sources_file), "a+") as op_src_file:
-            op_src_file.write(f"{rendered_schema_tbl}{sum_rendered_table_pairs_op}\n")
+            # first write the table-level details
+            op_src_file.write(f"{rendered_schema_tbl}")
+            # followed by the col_namw-description pairs
+            op_src_file.write(f"{sum_rendered_table_pairs_op}\n")
 
     return
 
 
 if __name__ == "__main__":
 
-    # call the main orchestration routine function
+    # call the main orchestration function
     main()

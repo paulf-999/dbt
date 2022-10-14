@@ -67,6 +67,8 @@ def rename_dbt_model_paths(pattern, path):
 if __name__ == "__main__":
     """This is executed when run from the command line"""
 
+    # perform the directory name substitutions
     process_sub_dir_paths(dbt_models_dir, string_patterns)
 
+    # perform file name substitutions
     process_file_paths(dbt_models_dir, string_patterns)

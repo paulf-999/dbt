@@ -3,7 +3,9 @@
 Scripts to:
 
 * Automate the dbt project setup process.
-* Generate prerequisite (dbt) SQL and yaml files in bulk.
+* Generate (dbt) SQL and yaml files in bulk.
+* Generate dbt resource property (.yml) files.
+* Ensure the file/folder structure follows best practices from the off.
 
 See `example_dbt_project` for an example of the generated dbt project files.
 
@@ -18,6 +20,7 @@ See `example_dbt_project` for an example of the generated dbt project files.
   * dbt Project Setup Automation
   * Generate the dbt 'source properties' file (`_source.yml`)
   * Generate dbt SQL objects in bulk
+  *
   * Note: Data Dictionary/Metadata Required for Features 2 and 3
 
 ---
@@ -27,9 +30,10 @@ See `example_dbt_project` for an example of the generated dbt project files.
 1. Install the prerequisites libraries by running: `make deps`.
 2. Run `make install` to:
 
-* Setup a dbt project & validate source DB connectivity
-* Generate a dbt source properties file (`source.yml`)
-* Generate (dbt) SQL Files in bulk (i.e., snapshots or 'incremental' [loads])
+1) Set up a dbt project and validate source DB connectivity.
+2) Generate a dbt resource properties file (`_source.yml`) using data from an input data dictionaries/metadata.
+3) Generate the `models` file/folder structure to follow [dbt's recommend project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview).
+4) Generate (dbt) SQL files in bulk either as: snapshots tables or incremental loads.
 
 ### Prerequisites
 
@@ -66,7 +70,16 @@ A `Makefile` has been used to orchestrate the steps required to set up a dbt pro
     * Accepted values
     * Relationship constraints
 
-### iii. Generating dbt SQL objects in bulk
+### iii. Generate the `models` file/folder structure to follow [dbt's recommend project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview)
+
+* See the python script `py/gen_dbt_model_directory.py`.
+* This step automates the creation of the dbt models files/folder structure to follow [dbt's recommend project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview). Doing this ensures that the models folder contains:
+  * `staging`, `intermediate` and `marts` directories at the root of the `models` folder.
+  * Dedicated `_sources.yml` & `models.yml` files are created within the `staging` folder.
+  * A dedicated `models.yml` files within the `marts` folder.
+  * And finally, example SQL files (each containing boilerplate CTE 'import, logical and final' section code) within each of these (saved as `.j2` templates to avoid compilation errors).
+
+### iv. Generate dbt SQL objects in bulk
 
 * See `gen_dbt_sql_objs` in the `Makefile`.
 * This steps automates generatating (dbt) SQL files in bulk (either as: `snapshot` or `incremental [load]` SQL files) using Jinja templates. It does this using the python script `py/gen_dbt_sql_objs.py`.

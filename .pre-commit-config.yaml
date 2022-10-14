@@ -6,6 +6,7 @@ repos:
     hooks:
     -   id: check-added-large-files # prevents giant files from being committed.
     -   id: check-json # checks json files for parseable syntax.
+    -   id: check-yaml # checks yaml files for parseable syntax.
     -   id: check-merge-conflict # checks for files that contain merge conflict strings.
     -   id: debug-statements # checks for debugger imports and py37+ `breakpoint()` calls in python source.
     -   id: end-of-file-fixer # ensures that a file is either empty, or ends with one newline.
