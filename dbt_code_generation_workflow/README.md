@@ -20,7 +20,6 @@ See `example_generated_dbt_project` for an example of the generated dbt project 
   * dbt Project Setup Automation
   * Generate the dbt 'source properties' file (`_source.yml`)
   * Generate dbt SQL objects in bulk
-  *
   * Note: Data Dictionary/Metadata Required for Features 2 and 3
 
 ---
