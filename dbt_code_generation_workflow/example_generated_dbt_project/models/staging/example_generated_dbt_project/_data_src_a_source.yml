@@ -26,11 +26,6 @@ sources:
             tests:
               - unique
               - not_null
-              - accepted_values:
-                  values: 1.0
-              - relationships:
-                  to: ref('1.0')
-                  field:
           - name: STREET
             description: ""
           - name: STRSUPPL1

@@ -39,3 +39,6 @@ venv.bak/
 # Runtime data
 pids
 *.pid
+
+sdw/
+example.xlsx

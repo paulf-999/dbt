@@ -112,6 +112,8 @@ copy_templates_into_dbt_project: get_ips
 	@cp -r templates/template_dirs/target/ ${DBT_PROJECT_NAME}/target/
 	@cp -r templates/template_dirs/tests/ ${DBT_PROJECT_NAME}/tests/
 	@cp templates/packages.yml ${DBT_PROJECT_NAME}
+	@cp templates/README.md.j2 ${DBT_PROJECT_NAME}
+	@cp -f templates/.gitignore ${DBT_PROJECT_NAME}
 
 #############################################################################################
 # dbt-specific commands
@@ -133,7 +135,7 @@ gen_source_properties_file: get_ips
 	@echo "-----------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_source_properties_file'. Generate the dbt source.yml (source properties) file.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "-----------------------------------------------------------------------"
-	@python3 py/gen_source_properties.py
+	@python3 py/gen_dbt_src_properties.py
 	@# create dir if not exists
 	#@cp op/${DATA_SRC}/_${DATA_SRC}_source.yml ${DBT_PROJECT_NAME}/models/${DBT_MODEL}/
 	#TODO - uncomment the below & then delete the above
