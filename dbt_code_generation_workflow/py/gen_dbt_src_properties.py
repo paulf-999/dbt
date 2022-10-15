@@ -30,11 +30,13 @@ def generate_source_properties_for_table(list_col_name_description_pairs):
             col_name=pair[0].strip(),
             col_description=pair[1].strip(),
             primary_key=pair[2],
-            unique=pair[3],
-            not_null=pair[4],
-            accepted_values=pair[5],
-            fk_constraint_table=pair[6],
-            fk_constraint_key=pair[7],
+            created_at=pair[3],
+            updated_at=pair[4],
+            unique=pair[5],
+            not_null=pair[6],
+            accepted_values=pair[7],
+            fk_constraint_table=pair[8],
+            fk_constraint_key=pair[9],
         )
         # fmt: off
         sum_rendered_table_pairs_op += f"\n{rendered_table_pairs}"
