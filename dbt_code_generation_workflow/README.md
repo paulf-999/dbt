@@ -7,6 +7,48 @@ Scripts to:
 * Generate dbt resource property (.yml) files.
 * Ensure the file/folder structure follows best practices from the off.
 
+The goal of these scripts is to recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
+
+```bash
+${DBT_PROJECT_NAME}
+├── analysis
+├── data
+├── docs
+│   └── pull_request_template.md
+├── macros
+│   ├── _macros.yml
+│   ├── generate_schema_name.sql
+│   └── grant_select_on_schemas.sql
+├── models
+│   ├── intermediate
+│   │   ├── _int_<entity>__<verb>.yml.j2 (just a placeholder)
+│   │   └── example_cte.sql.j2 (placeholder)
+│   ├── marts
+│   │   ├── _models.yml.j2 (placeholder)
+│   │   └── dim_customer.sql.j2 (placeholder)
+│   ├── staging
+│   │   ├── ${DBT_PROJECT_NAME}
+│   │   │   ├── ${DBT_PROJECT_NAME}__docs.md (TBC)
+│   │   │   ├── ${DBT_PROJECT_NAME}__models.yml
+│   │   │   ├── ${DBT_PROJECT_NAME}__sources.yml
+│   │   │   ├── base (TBC)
+│   │   │   │   ├── base_jaffle_shop__customers.sql
+│   │   │   │   └── base_jaffle_shop__deleted_customers.sql
+│   │   │   ├── ${DBT_PROJECT_NAME}__customer.sql
+│   └── utilities
+│       └── all_dates.sql
+├── snapshots
+│   └── ${DATA_SRC}
+│       └── ${DATA_SRC_SRC_TABLE}_snapshot.sql
+├── tests
+│   └── generic
+│       └──is_table_empty.sql
+├── README.md
+├── dbt_project.yml
+└── packages.yml
+
+```
+
 See `example_generated_dbt_project` for an example of the generated dbt project files.
 
 ---
