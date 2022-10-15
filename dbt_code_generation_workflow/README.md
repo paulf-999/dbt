@@ -13,14 +13,16 @@ See `example_generated_dbt_project` for an example of the generated dbt project 
 
 ## Contents
 
-1. How-to Run
-  * Prerequisites
+1.How-to Run
 
-2. Overview
-  * dbt Project Setup Automation
-  * Generate the dbt 'source properties' file (`_source.yml`)
-  * Generate dbt SQL objects in bulk
-  * Note: Data Dictionary/Metadata Required for Features 2 and 3
+* Prerequisites
+
+2.Overview
+
+* dbt Project Setup Automation
+* Generate the dbt 'source properties' file (`_source.yml`)
+* Generate dbt SQL objects in bulk
+* Note: Data Dictionary/Metadata Required for Features 2 and 3
 
 ---
 
