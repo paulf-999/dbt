@@ -30,17 +30,18 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 # The model configurations listed below follow dbt's best practices, described here: https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview
 models:
-  staging:
-    # Purpose: the staging layer is to create models from raw data.
-    # It's also used to rename and recast fields once. All subsequent data models should be built on top of the staging models, reducing the amount of duplicated code.
-    +materialized: view
-    # Staging models help keep our code DRY and should be materialized as views.
-  intermediate:
-    # Purpose: the intermediate layer is to prepare our staging models to join into the dimensional data model entities we want.
-    +materialized: ephemeral
-      # It's common to materialize intermediate models ephemerally. This ensures the warehouse doesn't get contaminated with tmp_/stg_ type models.
-  marts:
-    # Purpose: the marts layer is used to store the enterprise (dimensional) data model.
-    +materialized: table
-    # To give end users much faster performance we materialise mart models here as tables.
-    # This also saves costs recomputing these entire chains of models each time somebody refreshes a dashboard or runs a regression in python.
+  {{ DBT_PROJECT_NAME }}:
+    staging:
+      # Purpose: the staging layer is to create models from raw data.
+      # It's also used to rename and recast fields once. All subsequent data models should be built on top of the staging models, reducing the amount of duplicated code.
+      +materialized: view
+      # Staging models help keep our code DRY and should be materialized as views.
+    intermediate:
+      # Purpose: the intermediate layer is to prepare our staging models to join into the dimensional data model entities we want.
+      +materialized: ephemeral
+        # It's common to materialize intermediate models ephemerally. This ensures the warehouse doesn't get contaminated with tmp_/stg_ type models.
+    marts:
+      # Purpose: the marts layer is used to store the enterprise (dimensional) data model.
+      +materialized: table
+      # To give end users much faster performance we materialise mart models here as tables.
+      # This also saves costs recomputing these entire chains of models each time somebody refreshes a dashboard or runs a regression in python.
