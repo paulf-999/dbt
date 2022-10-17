@@ -10,6 +10,6 @@ FROM {% raw %}{{{% endraw %} ref('{{ src_tbl_name }}_snapshot') {% raw %}}}{% en
 {% raw %}{%{% endraw %} if is_incremental() {% raw %}%}{% endraw %}
 
   -- this filter will only be applied on an incremental run
-  where {{ updated_at_field }} > (SELECT MAX({{ updated_at_field }}) FROM {% raw %}{{{% endraw %} this {% raw %}}}{% endraw %})
+  where {{ updated_at }} > (SELECT MAX({{ updated_at }}) FROM {% raw %}{{{% endraw %} this {% raw %}}}{% endraw %})
 
 {% raw %}{%{% endraw %} endif {% raw %}%}{% endraw %}
