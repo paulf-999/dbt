@@ -69,12 +69,12 @@ ${DBT_PROJECT_NAME}
 └── packages.yml
 ```
 
-See `example_generated_dbt_project` for an example of the generated dbt project files.
-
 As well as that, these scripts aim to:
 
 * Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/incremental.sql.j2) patterns (templates).
 * Automate the creation of the dbt resource property (.yml) files - which are key for implementing DQ checks across the dbt project.
+
+See `example_generated_dbt_project` for an example of the generated dbt project files.
 
 ## 2. Getting Started
 
@@ -86,9 +86,11 @@ In addition, for a breakdown of each of the input args used for the data diction
 
 ### How-to Run
 
-1. Install the prerequisites libraries by running: `make deps`.
+1. Update the input parameters within [`ip/config.yaml`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/config.yaml).
+2. Update the other input parameters within [`ip/data_dic_field_mapping_config.yaml`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/data_dic_field_mapping_config.yaml).
 2. Upload an input data dictionary to the `ip` folder and update the value of the `data dictionary` key within [`ip/data_dic_field_mapping_config.yaml`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/data_dic_field_mapping_config.yaml) accordingly.
 3. Update the other input parameters within [`ip/config.yaml`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/config.yaml) accordingly.
+3. Install the prerequisites libraries by running: `make deps`.
 4. Run `make install` to:
 
 * Set up a dbt project and validate source DB connectivity.

@@ -95,6 +95,7 @@ initialise_dbt_project: get_ips
 	# Step 4: Setup the dbt_project.yml file
 	@echo
 	@j2 templates/jinja_templates/dbt_project.yml.j2 -o ${DBT_PROJECT_NAME}/dbt_project.yml
+	@js templates/README.md.j2 -o ${DBT_PROJECT_NAME}/README.md
 	# Step 5: rename files/folders in the dbt models directory
 	@python3 py/gen_dbt_model_directory.py
 	@echo
@@ -114,6 +115,9 @@ copy_templates_into_dbt_project: get_ips
 	@cp templates/packages.yml ${DBT_PROJECT_NAME}
 	@cp templates/README.md.j2 ${DBT_PROJECT_NAME}
 	@cp -f templates/.gitignore ${DBT_PROJECT_NAME}
+	@cp templates/.pre-commit-config.yaml ${DBT_PROJECT_NAME}
+	@cp templates/.sqlfluff ${DBT_PROJECT_NAME}
+	@cp templates/.sqlfluffignore ${DBT_PROJECT_NAME}
 
 #############################################################################################
 # dbt-specific commands
