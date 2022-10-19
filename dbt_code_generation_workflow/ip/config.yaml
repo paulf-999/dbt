@@ -12,7 +12,7 @@ db_connection_params:
   snowflake_private_key: # e.g., <path-to->/rsa-key.p8
   snowflake_warehouse: # e.g., wh_svc_dbt_xs_${ENV}
   snowflake_role: # e.g., svc_dbt_${ENV}
-  snowflake_src_db: # e.g., ${DATA_SRC}
+  snowflake_src_db: # e.g., ${DATA_SRC}_${ENV}
   snowflake_src_db_schema: # landed
 dbt_params:
   dbt_version: 1.2.0

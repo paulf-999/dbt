@@ -13,9 +13,11 @@ Described below are the parameters used for retrieving field-level metadata from
 
 | Parameter | Description                  | Example |
 | --------- | ---------------------------- | ------- |
-| data_dic_col_name_field | Data dictionary column used to capture the field name. | `<company_abc>.ap-southeast-2` |
-| data_dic_descrip_field | Data dictionary column used to capture the field description. | `jbloggs@email.com` |
+| data_dic_col_name_field | Data dictionary column used to capture the field name. | `field` |
+| data_dic_descrip_field | Data dictionary column used to capture the field description. | `description` |
 | data_dic_primary_key_field | Data dictionary column used to indicate whether a field represents the primary key. | `primary_key` |
+| data_dic_created_at_field | Data dictionary column used to indicate when the record was created. | `created_at_field` |
+| data_dic_updated_at_field | Data dictionary column used to indicate when the record was updated. | `updated_at_field` |
 | data_dic_unique_field | Data dictionary column used to indicate the whether the value should be unique. | `unique` |
 | data_dic_not_null_field | Data dictionary column used to indicate not_null. | `not_null` |
 | data_dic_accepted_values_field | Data dictionary column used to indicate 'accepted values'. | `accepted_values` |

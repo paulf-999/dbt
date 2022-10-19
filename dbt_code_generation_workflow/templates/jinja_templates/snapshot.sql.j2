@@ -2,7 +2,7 @@
 
 {% raw %}{{{% endraw %}
     config(
-        target_database='{{ snowflake_src_db }}_{{ env }}',
+        target_database='{{ snowflake_src_db }}',
         target_schema='snapshot',
         unique_key='{{ primary_key }}',
 

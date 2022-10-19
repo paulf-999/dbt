@@ -6,7 +6,7 @@
 
 .EXPORT_ALL_VARIABLES:
 
-.PHONY = installations deps clean install get_ips init_dbt_project validate_db_connection install_packages gen_schema_w_codegen gen_dbt_sql_objs
+.PHONY = installations deps clean install get_ips initialise_dbt_project validate_src_db_connection install_packages gen_schema_w_codegen gen_dbt_sql_objs
 
 CONFIG_FILE := ip/config.yaml
 # the 2 vars below are just for formatting CLI message output
@@ -30,10 +30,10 @@ install: get_ips
 	# Step 1: remove any previously generated files
 	@make -s clean
 	# Step 2: Initialise the dbt project
-	@make -s init_dbt_project
+	@make -s initialise_dbt_project
 	@echo
 	# Step 3: Verify connection to the source DB
-	@make -s validate_db_connection
+	@make -s validate_src_db_connection
 	@echo
 	# Step 4: Install the desired dbt packages
 	@make -s install_packages
@@ -73,9 +73,9 @@ get_ips:
 #############################################################################################
 # Targets used for dbt project setup
 #############################################################################################
-init_dbt_project: get_ips
+initialise_dbt_project: get_ips
 	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'init_dbt_project'. Initialise the dbt project.${COLOUR_TXT_FMT_CLOSING}"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'initialise_dbt_project'. Initialise the dbt project.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "------------------------------------------------------------------"
 	@[ "${DBT_PROJECT_NAME}" ] || ( echo "\nError: DBT_PROJECT_NAME variable is not set\n"; exit 1 )
 	# Step 1: Initialise the dbt project. dbt project name = '${DBT_PROJECT_NAME}'.
@@ -118,9 +118,9 @@ copy_templates_into_dbt_project: get_ips
 #############################################################################################
 # dbt-specific commands
 #############################################################################################
-validate_db_connection: get_ips
+validate_src_db_connection: get_ips
 	@echo "-----------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'validate_db_connection'. Verify connection to the source DB.${COLOUR_TXT_FMT_CLOSING}"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'validate_src_db_connection'. Verify connection to the source DB.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "-----------------------------------------------------------------------"
 	@echo
 	cd ${DBT_PROJECT_NAME} && dbt debug --profiles-dir=profiles

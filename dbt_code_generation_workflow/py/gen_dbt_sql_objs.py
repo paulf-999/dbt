@@ -20,6 +20,25 @@ import inputs
 import error_op
 
 
+def generate_sql_op(data_src, src_table, rendered_sql):
+    """generate an output sql file using the rendered_sql valuw"""
+    # make the target dir if it doesn't exist
+    target_dir = f"op/{data_src}/{ip_jinja_template}"
+    verify_dir_exists(target_dir)
+
+    if ip_jinja_template == 'snapshot':
+        op_filepath = os.path.join(target_dir, f"{src_table}_snapshot.sql")
+    else:
+        op_filepath = os.path.join(target_dir, f"{src_table}.sql")
+
+    logger.debug(f"op_filepath = {op_filepath}")
+
+    with open((op_filepath), "w") as op_sql_file:
+        op_sql_file.write(rendered_sql)
+
+    return
+
+
 def parse_data_src_summary_metadata(data_src, src_table):
     """Parse the input data dictionary"""
     table_level_metadata, metadata_sheet_name = inputs.get_ips_for_table_level_metadata()
@@ -39,21 +58,6 @@ def parse_data_src_summary_metadata(data_src, src_table):
     logger.info(f"primary_key = {primary_key_field}\nupdated_at_field = {updated_at_field}")
 
     return primary_key_field, created_at_field, updated_at_field
-
-
-def generate_sql_op(data_src, src_table, rendered_sql):
-    """generate an output sql file using the rendered_sql valuw"""
-    # make the target dir if it doesn't exist
-    target_dir = f"op/{data_src}/{ip_jinja_template}"
-    verify_dir_exists(target_dir)
-
-    op_filepath = os.path.join(target_dir, f"{src_table}.sql")
-    logger.debug(f"op_filepath = {op_filepath}")
-
-    with open((op_filepath), "w") as op_sql_file:
-        op_sql_file.write(rendered_sql)
-
-    return
 
 
 def render_jinja(data_src, src_table, env, snowflake_db):

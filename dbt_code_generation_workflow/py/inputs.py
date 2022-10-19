@@ -48,15 +48,15 @@ def get_ips_for_gen_sql_objs():
 
     data = read_ip_config_file()
     env = data["general_params"]["env"]
-    ip_data_src = data["general_params"]["data_src"]
+    data_src = data["general_params"]["data_src"]
 
     # data_src table specific key/values
     data_src_ip_tbls = {}
     # TODO - the input for this would need to be manually changed
     data_src_ip_tbls["data_src_a"] = data["general_params"]["data_src_tables"]["data_src_a_src_tables"]
-    snowflake_db = data["db_connection_params"]["snowflake_src_db"].replace("${DATA_SRC}", ip_data_src)
+    snowflake_db = data["db_connection_params"]["snowflake_src_db"].replace("${DATA_SRC}", data_src).replace("${ENV}", env)
 
-    return env, ip_data_src, data_src_ip_tbls, snowflake_db
+    return env, data_src, data_src_ip_tbls, snowflake_db
 
 
 def get_ips_for_table_level_metadata():
