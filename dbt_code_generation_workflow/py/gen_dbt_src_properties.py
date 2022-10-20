@@ -4,7 +4,7 @@ Python Version  : 3.8
 * Name          : gen_source_properties.py
 * Description   : Parses a data dictionary file to generate a dbt source.yml file
 * Created       : 03-10-2022
-* Usage         : python3 gen_source_properties.py
+* Usage         : python3 gen_dbt_src_properties.py
 """
 
 __author__ = "Paul Fry"
@@ -89,12 +89,12 @@ def main():
     """Main orchestration routine"""
 
     # fetch inputs from the config file
-    env, data_src, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename = inputs.get_ips_for_src_properties()
+    env, data_src, snowflake_db, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename = inputs.get_ips_for_src_properties()
 
     # first write the 'header' of the source.yml file
     # fmt: off
     rendered_schema_header = jinja_env_source.get_template("source_header.yml.j2").render(
-        data_src=data_src, env=env, src_db_schema=src_db_schema)
+        data_src=data_src, env=env, src_db=snowflake_db, src_db_schema=src_db_schema)
     # fmt: on
 
     # make the target dir if it doesn't exist
@@ -111,7 +111,7 @@ def main():
     # extract data from each XLS sheet
     for xls_sheet in xls_sheet_names:
 
-        # create a column name/description paris and store these in a list
+        # create a column name/description pairs and store these in a list
         list_col_name_description_pairs = read_xls_file(data_dictionary, xls_sheet)
         logger.debug(list_col_name_description_pairs)
 
@@ -127,7 +127,7 @@ def main():
         with open((op_sources_file), "a+") as op_src_file:
             # first write the table-level details
             op_src_file.write(f"{rendered_schema_tbl}")
-            # followed by the col_namw-description pairs
+            # followed by the col_name-description pairs
             op_src_file.write(f"{sum_rendered_table_pairs_op}\n")
 
     return

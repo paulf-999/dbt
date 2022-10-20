@@ -1,15 +1,18 @@
-{% raw %}{{{% endraw %}
+{{ '{{' }}-
     config(
+        schema='raw_hist',
         materialized='incremental'
     )
-{% raw %}}}{% endraw %}
+-{{ '}}' }}
 
 SELECT *
-FROM {% raw %}{{{% endraw %} ref('{{ src_tbl_name }}_snapshot') {% raw %}}}{% endraw %}
+FROM {{ '{{' }} ref('{{ src_tbl_name }}_snapshot') {{ '}}' }}
 
-{% raw %}{%{% endraw %} if is_incremental() {% raw %}%}{% endraw %}
-
+{{ '{' }}%- if is_incremental() %{{ '}' }}
   -- this filter will only be applied on an incremental run
-  where {{ updated_at }} > (SELECT MAX({{ updated_at }}) FROM {% raw %}{{{% endraw %} this {% raw %}}}{% endraw %})
+  WHERE {{ updated_at }} > (
+    SELECT MAX({{ updated_at }})
+    FROM {{ '{{' }} this {{ '}}' }}
+  )
 
-{% raw %}{%{% endraw %} endif {% raw %}%}{% endraw %}
+{{ '{' }}%- endif %{{ '}' }}

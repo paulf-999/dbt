@@ -1,6 +1,6 @@
-{% raw %}{%{% endraw %} snapshot {{ src_tbl_name }}_snapshot {% raw %}%}{% endraw %}
+{{ '{' }}% snapshot {{ src_tbl_name }}_snapshot %{{ '}' }}
 
-{% raw %}{{{% endraw %}
+{{ '{{' }}-
     config(
         target_database='{{ snowflake_src_db }}',
         target_schema='snapshot',
@@ -10,12 +10,14 @@
         updated_at='{{ updated_at }}',
         invalidate_hard_deletes=True
     )
-{% raw %}}}{% endraw %}
-
+-{{ '}}' }}
 -- note: 'invalidate_hard_deletes' is a dbt opt-in feature to enable invalidating hard deleted records, when performing the snapshot query.
 
 SELECT *
-FROM {% raw %}{{{% endraw %} source('{{ source_name }}', '{{ src_tbl_name }}') {% raw %}}}{% endraw %}
-LIMIT 5
+FROM {{ '{{' }} source('{{ source_name }}', '{{ src_tbl_name }}') {{ '}}' }}
 
-{% raw %}{%{% endraw %} endsnapshot {% raw %}%}{% endraw %}
+{{ '{' }}%- if target.name == 'dev' %{{ '}' }}
+{{ '{{' }} limit_row_count(5) {{ '}}' }}
+{{ '{' }}%- endif %{{ '}' }}
+
+{{ '{' }}% endsnapshot %{{ '}' }}

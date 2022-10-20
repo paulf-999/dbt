@@ -21,7 +21,7 @@ import error_op
 
 
 def generate_sql_op(data_src, src_table, rendered_sql):
-    """generate an output sql file using the rendered_sql valuw"""
+    """generate an output sql file using the rendered_sql value"""
     # make the target dir if it doesn't exist
     target_dir = f"op/{data_src}/{ip_jinja_template}"
     verify_dir_exists(target_dir)
@@ -55,7 +55,7 @@ def parse_data_src_summary_metadata(data_src, src_table):
     created_at_field = df["created_at_field"].values[0]
     updated_at_field = df["updated_at_field"].values[0]
 
-    logger.info(f"primary_key = {primary_key_field}\nupdated_at_field = {updated_at_field}")
+    logger.debug(f"primary_key = {primary_key_field}\nupdated_at_field = {updated_at_field}")
 
     return primary_key_field, created_at_field, updated_at_field
 

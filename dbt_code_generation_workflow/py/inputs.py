@@ -34,7 +34,7 @@ def get_ips_for_gen_dbt_model_directory():
     """Read input from config file for gen_dbt_model_directory.py"""
 
     data = read_ip_config_file()
-    data_src = data["general_params"]["data_src"]
+    data_src = data["data_src_params"]["data_src"]
     dbt_project_name = data["dbt_params"]["dbt_project_name"]
 
     return data_src, dbt_project_name
@@ -48,7 +48,7 @@ def get_ips_for_gen_sql_objs():
 
     data = read_ip_config_file()
     env = data["general_params"]["env"]
-    data_src = data["general_params"]["data_src"]
+    data_src = data["data_src_params"]["data_src"]
 
     # data_src table specific key/values
     data_src_ip_tbls = {}
@@ -78,22 +78,25 @@ def get_ips_for_src_properties():
     field_mapping_data = read_ip_field_mapping_data()
 
     env = data["general_params"]["env"]
-    data_src = data["general_params"]["data_src"]
+    data_src = data["data_src_params"]["data_src"]
+    snowflake_db = data["db_connection_params"]["snowflake_src_db"].replace("${DATA_SRC}", data_src)
     src_db_schema = data["db_connection_params"]["snowflake_src_db_schema"]
 
     # data dictionary inputs
-    data_dictionary = field_mapping_data["data_dictionary"]
+    data_dictionary = field_mapping_data["data_dictionary"].replace("{data_src}", data_src)
     target_op_src_filename = field_mapping_data["target_op_src_filename"].replace("{data_src}", data_src)
-    data_src_tables = data["general_params"]["data_src_tables"]
+    data_src_tables = data["data_src_params"]["data_src_tables"]
 
     # the loop below just helps ensure the script is generic, regardless of the data_src
     xls_sheet_names = []
 
     for src, ip_tbls in data_src_tables.items():
-        for tbl in ip_tbls:
-            xls_sheet_names.append(tbl)
+        # only fetch the tables for the targeted data_src
+        if src.startswith(data_src) is True:
+            for tbl in ip_tbls:
+                xls_sheet_names.append(tbl)
 
-    return env, data_src, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename
+    return env, data_src, snowflake_db, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename
 
 
 def get_data_dictionary_args():

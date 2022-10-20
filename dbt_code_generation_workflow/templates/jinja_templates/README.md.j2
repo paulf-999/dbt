@@ -31,23 +31,18 @@ The dbt project structure used follows the structure recommended by dbt in [How 
 │   ├── generate_schema_name.sql
 │   └── grant_select_on_schemas.sql
 ├── models
-|   └── data_ingestion
-│       └── {{ DATA_SRC }}
-│       │      ├── {{ DBT_PROJECT_NAME }}__sources.yml
-│       │      └── {{ DATA_SRC_SRC_TABLE }}.sql
-|   └── integration
-│       ├── intermediate
-│       │   ├── _int_<entity>__<verb>.yml.j2 (just a placeholder)
-│       │   └── example_cte.sql.j2 (placeholder)
-│       ├── marts
-│       │   ├── _models.yml
-│       │   └── dim_customer.sql (example)
-│       ├── staging
-│       │   ├── {{ DBT_PROJECT_NAME }}
-│       │   │   ├── {{ DBT_PROJECT_NAME }}__docs.md (TBC)
-│       │   │   ├── {{ DBT_PROJECT_NAME }}__models.yml
-│       │   │   ├── {{ DBT_PROJECT_NAME }}__sources.yml
-│   │   │   └── {{ DATA_SRC }}_stg__customer.sql (example)
+│   ├── intermediate
+│   │   ├── _int_<entity>__<verb>.yml.j2 # just a placeholder)
+│   │   └── example_cte.sql.j2 #placeholder)
+│   ├── marts
+│   │   ├── _models.yml.j2 #placeholder
+│   │   └── dim_customer.sql.j2 #placeholder
+│   ├── staging
+│   │   ├── {{ DBT_PROJECT_NAME }}
+│   │   │   ├── {{ DBT_PROJECT_NAME }}__docs.md
+│   │   │   ├── {{ DBT_PROJECT_NAME }}__models.yml
+│   │   │   ├── {{ DBT_PROJECT_NAME }}__sources.yml
+│   │   │   └── stg_{{ DATA_SRC }}__customer.sql
 │   └── utilities
 │       └── all_dates.sql
 ├── snapshots
@@ -63,7 +58,6 @@ The dbt project structure used follows the structure recommended by dbt in [How 
 ├── README.md
 ├── dbt_project.yml
 └── packages.yml
-
 ```
 
 ### Project structure created using the 'dbt Code Generation Workflow'
@@ -118,19 +112,20 @@ The `models` folder structure follows dbt’s recommended folder structure as sh
 
 ```
 ├── models
-|   └── integration
-│       ├── intermediate
-│       │   ├── _int_<entity>__<verb>.yml.j2 (just a placeholder)
-│       │   └── example_cte.sql.j2 (placeholder)
-│       ├── marts
-│       │   ├── _models.yml.j2 (placeholder)
-│       │   └── dim_customer.sql (placeholder)
-│       ├── staging
-│       │   ├── {{ DBT_PROJECT_NAME }}
-│       │   │   ├── {{ DBT_PROJECT_NAME }}__docs.md (TBC)
-│       │   │   ├── {{ DBT_PROJECT_NAME }}__models.yml
-│       │   │   ├── {{ DBT_PROJECT_NAME }}__sources.yml
-│       │   └── {{ DATA_SRC }}_stg__customer.sql
+│   ├── intermediate
+│   │   ├── _int_<entity>__<verb>.yml.j2 # just a placeholder)
+│   │   └── example_cte.sql.j2 #placeholder)
+│   ├── marts
+│   │   ├── _models.yml.j2 #placeholder
+│   │   └── dim_customer.sql.j2 #placeholder
+│   ├── staging
+│   │   ├── {{ DBT_PROJECT_NAME }}
+│   │   │   ├── {{ DBT_PROJECT_NAME }}__docs.md
+│   │   │   ├── {{ DBT_PROJECT_NAME }}__models.yml
+│   │   │   ├── {{ DBT_PROJECT_NAME }}__sources.yml
+│   │   │   └── stg_{{ DATA_SRC }}__customer.sql
+│   └── utilities
+│       └── all_dates.sql
 ```
 
 Whereby the processing flow is as follows:

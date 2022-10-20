@@ -49,11 +49,30 @@ install: get_ips
 	@echo "Finished! Check the newly created dbt project folder: '${DBT_PROJECT_NAME}'"
 	@echo -e "------------------------------------------------------------------\n"
 
+add_data_source: get_ips
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'add_data_source'. Use this to add a new data source to your dbt project.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
+	# create a target dir in the dbt project for the new data source
+	@mkdir ${DBT_PROJECT_NAME}/models/${DBT_MODEL}/${DATA_SRC}
+	# 'Code Generation Workflow': Generate the dbt source.yml (source properties) file
+	@make -s gen_source_properties_file
+	@echo "--------------------------------"
+	@echo
+	# 'Code Generation Workflow': Generate the snapshot/incremental .sql files using Jinja templates
+	@echo
+	@make -s gen_dbt_sql_objs
+	@make -s copy_dbt_project_to_af_dags_dir
+	@echo -e "\n------------------------------------------------------------------"
+	@echo "Finished! Check the newly created dbt project folder: '${DBT_PROJECT_NAME}'"
+	@echo -e "------------------------------------------------------------------\n"
+
+
 get_ips:
-	@# Target: 'get_ips'. Get input args from ip/config.json
+	@# Target: 'get_ips'. Get input args from ip/config.yaml
 	@# general params
 	$(eval ENV=$(shell yq -r '.general_params.env' ${CONFIG_FILE}))
-	$(eval DATA_SRC=$(shell yq -r '.general_params.data_src' ${CONFIG_FILE}))
+	$(eval DATA_SRC=$(shell yq -r '.data_src_params.data_src' ${CONFIG_FILE}))
 	@# db_connection params
 	$(eval SNOWFLAKE_ACCOUNT=$(shell yq -r '.db_connection_params.snowflake_account' ${CONFIG_FILE}))
 	$(eval SNOWFLAKE_USERNAME=$(shell yq -r '.db_connection_params.snowflake_username' ${CONFIG_FILE}))
@@ -88,19 +107,14 @@ initialise_dbt_project: get_ips
 	@mkdir ${DBT_PROJECT_NAME}/models/integration
 	@make -s copy_templates_into_dbt_project
 	@echo
-	# Step 3: Generate the profiles.yml file
-	@echo
+	# Step 3: Generate the profiles.yml, dbt_project.yml and README files
 	@j2 ${DBT_PROJECT_NAME}/profiles/profiles.yml.j2 -o ${DBT_PROJECT_NAME}/profiles/profiles.yml
 	@rm -r ${DBT_PROJECT_NAME}/models/example && rm ${DBT_PROJECT_NAME}/README.md
-	# Step 4: Setup the dbt_project.yml file
-	@echo
 	@j2 templates/jinja_templates/dbt_project.yml.j2 -o ${DBT_PROJECT_NAME}/dbt_project.yml
-	@js templates/README.md.j2 -o ${DBT_PROJECT_NAME}/README.md
-	# Step 5: rename files/folders in the dbt models directory
+	@j2 templates/jinja_templates/README.md.j2 -o ${DBT_PROJECT_NAME}/README.md
+	# Step 4: rename files/folders in the dbt models directory
 	@python3 py/gen_dbt_model_directory.py
 	@echo
-	# Step 6: Change permissions of the dbt project folder. Otherwise you run into perms issues with the logs/ & target/ folders
-	@chmod -R 777 ${DBT_PROJECT_NAME}
 
 copy_templates_into_dbt_project: get_ips
 	@cp -r templates/template_dirs/docs/ ${DBT_PROJECT_NAME}/docs/
@@ -113,7 +127,6 @@ copy_templates_into_dbt_project: get_ips
 	@cp -r templates/template_dirs/target/ ${DBT_PROJECT_NAME}/target/
 	@cp -r templates/template_dirs/tests/ ${DBT_PROJECT_NAME}/tests/
 	@cp templates/packages.yml ${DBT_PROJECT_NAME}
-	@cp templates/README.md.j2 ${DBT_PROJECT_NAME}
 	@cp -f templates/.gitignore ${DBT_PROJECT_NAME}
 	@cp templates/.pre-commit-config.yaml ${DBT_PROJECT_NAME}
 	@cp templates/.sqlfluff ${DBT_PROJECT_NAME}
@@ -127,7 +140,7 @@ validate_src_db_connection: get_ips
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'validate_src_db_connection'. Verify connection to the source DB.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "-----------------------------------------------------------------------"
 	@echo
-	cd ${DBT_PROJECT_NAME} && dbt debug --profiles-dir=profiles
+	cd ${DBT_PROJECT_NAME} && dbt debug --profiles-dir=profiles --profile=local_${DBT_PROFILE_NAME}
 
 install_packages: get_ips
 	@echo "------------------------------------------------------------------"
@@ -171,6 +184,24 @@ gen_dbt_sql_objs: get_ips
 	@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/staging/${DBT_PROJECT_NAME}/
 	#TODO - uncomment the below & then delete the above
 	#@cp -R op/${DATA_SRC}/incremental/*.sql ${DBT_PROJECT_NAME}/models/${DBT_MODEL}
+
+copy_dbt_project_to_af_dags_dir: get_ips
+	@echo "------------------------------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target 'demo'. For demo purposes only, copy over the the dbt project '${DBT_PROJECT_NAME}' to the Airflow DAGS repo and change required perms/copy required files.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------------------------------"
+	# copy over the dbt project to the Airflow DAGs repo.
+	# If a dbt project of the same name already exists in the AF dags repo, add a '_bkp' suffix.
+	@if test -d ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}; \
+	then echo "# INFO: dbt project repo already exists" \
+	&& mv ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME} ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}_bkp \
+	&& cp -R ${DBT_PROJECT_NAME} ${AF2_DAGS_PATH}/dbt/; \
+	else echo "# INFO: dbt project repo does not exist. Copy the dbt project over." \
+	&& cp -R ${DBT_PROJECT_NAME} ${AF2_DAGS_PATH}/dbt/; \
+	fi
+	@chmod -R 777 ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}/logs
+	@chmod -R 777 ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}/target
+	# copy the user's RSA key path into the dbt profiles dir
+	@cp ${RSA_KEY_PATH} ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}/profiles/
 
 run_model: get_ips
 	@echo "------------------------------------------------------------------"
