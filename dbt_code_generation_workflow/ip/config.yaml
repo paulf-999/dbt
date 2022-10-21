@@ -1,15 +1,11 @@
 ---
 general_params:
   env: dev
-  data_src: # e.g. data_src_a
-  data_src_tables:
-    data_src_a_src_tables: # data source source tables (used for the 2 .py generation scripts)
-    - table_a
-    - table_b
+  abs_path_to_airflow2_dags: # e.g., <path-to>/airflow-v2-dags. Note: make sure you don't include a trailing backslash.
 db_connection_params:
-  snowflake_account: <snowflake_account>.ap-southeast-2
   snowflake_username: # e.g., jbloggs@email.com
-  snowflake_private_key: # e.g., <path-to->/rsa-key.p8
+  abs_path_to_snowflake_private_key: # e.g., /<abs-path-to->/rsa-key.p8
+  snowflake_account: <snowflake_account>.ap-southeast-2
   snowflake_warehouse: # e.g., wh_svc_dbt_xs_${ENV}
   snowflake_role: # e.g., svc_dbt_${ENV}
   snowflake_src_db: # e.g., ${DATA_SRC}_${ENV}
@@ -23,3 +19,9 @@ dbt_params:
 ip_metadata_file_params:
   table_level_metadata: ip/table_level_metadata.xlsx # table-level metadata, used to capture the 'primary_key' & 'last_updated' for each src table across the data sources.
   metadata_sheet_name: Sheet1 # XLS sheet name
+data_src_params:
+  data_src: # e.g. data_src_a
+  data_src_tables:
+    data_src_a_src_tables: # data source source tables (used for the 2 .py generation scripts)
+    - table_a
+    - table_b

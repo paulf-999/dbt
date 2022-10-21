@@ -31,11 +31,15 @@ sources:
           - name: <col name>
             description: ""
             tests:
-              # string matching
-              - dbt_expectations.expect_column_value_lengths_to_be_between:
-              # other - good candidare use
-              - dbt_expectations.expect_column_min_to_be_between:
-              - dbt_expectations.expect_column_max_to_be_between:
-              # other - less of a candidate use
-              - dbt_expectations.expect_row_values_to_have_recent_data:
-              - dbt_expectations.expect_grouped_row_values_to_have_recent_data:
+            # data type testing (great candidate)
+            - dbt_expectations.expect_column_values_to_be_of_type:
+                column_type: VARCHAR
+
+            # string matching
+            - dbt_expectations.expect_column_value_lengths_to_be_between:
+            # other - good candidare use
+            - dbt_expectations.expect_column_min_to_be_between:
+            - dbt_expectations.expect_column_max_to_be_between:
+            # other - less of a candidate use
+            - dbt_expectations.expect_row_values_to_have_recent_data:
+            - dbt_expectations.expect_grouped_row_values_to_have_recent_data:

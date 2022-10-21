@@ -15,6 +15,13 @@ COLOUR_TXT_FMT_CLOSING := \033[0m
 
 installations: clean deps install
 
+clean: get_ips
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target 'clean'. Remove any redundant files, e.g. downloads.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
+	@# remove any dbt project files if they already exist
+	@rm -rf ${DBT_PROJECT_NAME}
+
 deps: get_ips
 	@echo "----------------------------------------------------------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'deps'. Download the relevant pip package dependencies (note: ignore the pip depedency resolver errors.)${COLOUR_TXT_FMT_CLOSING}"
@@ -23,28 +30,38 @@ deps: get_ips
 	@pip3 uninstall keyring -qy && pip3 install keyring -q # there is a module conflict here that otherwise throws a warning
 	@pip3 install --upgrade dbt-snowflake==${DBT_VERSION} -q
 
+#############################################################################################
+# 'install' & 'add_data_source' are the two main routines of this Makefile
+#############################################################################################
 install: get_ips
 	@echo "------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'install'. Run the setup and install targets.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "------------------------------------------------------------------"
-	# Step 1: remove any previously generated files
+	# Step 1:  Validate user inputs
+	@make -s validate_user_ip
+	# Step 2: remove any previously generated files
 	@make -s clean
-	# Step 2: Initialise the dbt project
+	# Step 3: Initialise the dbt project
 	@make -s initialise_dbt_project
 	@echo
-	# Step 3: Verify connection to the source DB
+	# Step 4: Verify connection to the source DB
 	@make -s validate_src_db_connection
 	@echo
-	# Step 4: Install the desired dbt packages
+	# Step 5: Install the desired dbt packages
 	@make -s install_packages
 	@echo
-	# Step 5: 'Code Generation Workflow': Generate the dbt source.yml (source properties) file
+	# Step 6: 'Code Generation Workflow': Generate the dbt source.yml (source properties) file
 	@make -s gen_source_properties_file
 	@echo "--------------------------------"
 	@echo
-	# Step 6: 'Code Generation Workflow': Generate the snapshot/incremental .sql files using Jinja templates
+	# Step 7: 'Code Generation Workflow': Generate the snapshot/incremental .sql files using Jinja templates
 	@echo
 	@make -s gen_dbt_sql_objs
+	# Step 8: Change permissions of the dbt project folder. Otherwise you run into perms issues with the logs/ & target/ folders
+	@chmod -R 777 ${DBT_PROJECT_NAME}
+	# Step 9: Tmp (demo only) - copy over the the dbt project '${DBT_PROJECT_NAME}' to the Airflow DAGS repo
+	# NOTE: 'copy_dbt_project_to_af_dags_dir' is only used to accelerate local Airflow/dbt development. Consider commenting out the call
+	@make -s copy_dbt_project_to_af_dags_dir
 	@echo -e "\n------------------------------------------------------------------"
 	@echo "Finished! Check the newly created dbt project folder: '${DBT_PROJECT_NAME}'"
 	@echo -e "------------------------------------------------------------------\n"
@@ -53,6 +70,10 @@ add_data_source: get_ips
 	@echo "------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'add_data_source'. Use this to add a new data source to your dbt project.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "------------------------------------------------------------------"
+	# validate the target dbt project exists
+	@if [ ! -d "${DBT_PROJECT_NAME}" ]; then echo -e "\nError: Target dbt project '${DBT_PROJECT_NAME}' does not exist.\n"; exit 1; fi
+	# validate user inputs
+	@make -s validate_user_ip
 	# create a target dir in the dbt project for the new data source
 	@mkdir ${DBT_PROJECT_NAME}/models/${DBT_MODEL}/${DATA_SRC}
 	# 'Code Generation Workflow': Generate the dbt source.yml (source properties) file
@@ -67,16 +88,19 @@ add_data_source: get_ips
 	@echo "Finished! Check the newly created dbt project folder: '${DBT_PROJECT_NAME}'"
 	@echo -e "------------------------------------------------------------------\n"
 
-
+#############################################################################################
+# Setup/validation targets: 'get_ips' & 'validate_user_ip'
+#############################################################################################
 get_ips:
 	@# Target: 'get_ips'. Get input args from ip/config.yaml
 	@# general params
-	$(eval ENV=$(shell yq -r '.general_params.env' ${CONFIG_FILE}))
-	$(eval DATA_SRC=$(shell yq -r '.data_src_params.data_src' ${CONFIG_FILE}))
+	$(eval ENV=$(shell yq -r '.general_params.env | select( . != null )' ${CONFIG_FILE}))
+	$(eval AF2_DAGS_PATH=$(shell yq -r '.general_params.abs_path_to_airflow2_dags | select( . != null )' ${CONFIG_FILE}))
+	$(eval DATA_SRC=$(shell yq -r '.data_src_params.data_src | select( . != null )' ${CONFIG_FILE}))
 	@# db_connection params
 	$(eval SNOWFLAKE_ACCOUNT=$(shell yq -r '.db_connection_params.snowflake_account' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_USERNAME=$(shell yq -r '.db_connection_params.snowflake_username' ${CONFIG_FILE}))
-	$(eval SNOWFLAKE_PRIVATE_FILE=$(shell yq -r '.db_connection_params.snowflake_private_key' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_USERNAME=$(shell yq -r '.db_connection_params.snowflake_username | select( . != null )' ${CONFIG_FILE}))
+	$(eval SNOWFLAKE_PRIVATE_FILE=$(shell yq -r '.db_connection_params.abs_path_to_snowflake_private_key | select( . != null )' ${CONFIG_FILE}))
 	$(eval SNOWFLAKE_WH=$(shell yq -r '.db_connection_params.snowflake_warehouse' ${CONFIG_FILE}))
 	$(eval SNOWFLAKE_ROLE=$(shell yq -r '.db_connection_params.snowflake_role' ${CONFIG_FILE}))
 	$(eval SNOWFLAKE_DB=$(shell yq -r '.db_connection_params.snowflake_data_src_db' ${CONFIG_FILE}))
@@ -88,6 +112,17 @@ get_ips:
 	$(eval DBT_PROJECT_NAME=$(shell yq -r '.dbt_params.dbt_project_name' ${CONFIG_FILE}))
 	$(eval DBT_MODEL=$(shell yq -r '.dbt_params.dbt_model' ${CONFIG_FILE}))
 	$(eval PROGRAM=$(shell yq -r '.dbt_params.program' ${CONFIG_FILE}))
+
+validate_user_ip: get_ips
+	$(info [+] Validate the user inputs)
+	# INFO: 1) Verify the user has provided a value for the key 'data_src' in ip/config.yaml
+	@[ "${DATA_SRC}" ] || ( echo -e "\nError: 'data_src' key is empty in ip/config.yaml\n"; exit 1 )
+	# INFO: 2) Verify the user has provided a value for the key 'snowflake_username' in ip/config.yaml
+	@[ "${SNOWFLAKE_USERNAME}" ] || ( echo -e "\nError: 'snowflake_username' key is empty in ip/config.yaml\n"; exit 1 )
+	# INFO: 3) Verify the user has provided a value for the key 'snowflake_private_key' in ip/config.yaml
+	@[ "${SNOWFLAKE_PRIVATE_FILE}" ] || ( echo -e "\nError: 'snowflake_private_key' key is empty in ip/config.yaml\n"; exit 1 )
+	# INFO: 4) Verify the user has provided a value for the key 'abs_path_to_airflow2_dags' in ip/config.yaml
+	@[ "${AF2_DAGS_PATH}" ] || ( echo -e "\nError: 'abs_path_to_airflow2_dags' key is empty in ip/config.yaml\n"; exit 1 )
 
 #############################################################################################
 # Targets used for dbt project setup
@@ -133,7 +168,7 @@ copy_templates_into_dbt_project: get_ips
 	@cp templates/.sqlfluffignore ${DBT_PROJECT_NAME}
 
 #############################################################################################
-# dbt-specific commands
+# dbt command targets
 #############################################################################################
 validate_src_db_connection: get_ips
 	@echo "-----------------------------------------------------------------------"
@@ -148,6 +183,15 @@ install_packages: get_ips
 	@echo "------------------------------------------------------------------"
 	@cd ${DBT_PROJECT_NAME} && dbt deps --profiles-dir=profiles
 
+run_model: get_ips
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'run_model'. Run the dbt model.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
+	@cd ${DBT_PROJECT_NAME} && dbt run --profiles-dir profiles --models ${DBT_MODEL}
+
+#############################################################################################
+# Python 'code generation' targets
+#############################################################################################
 gen_source_properties_file: get_ips
 	@echo "-----------------------------------------------------------------------"
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'gen_source_properties_file'. Generate the dbt source.yml (source properties) file.${COLOUR_TXT_FMT_CLOSING}"
@@ -190,28 +234,16 @@ copy_dbt_project_to_af_dags_dir: get_ips
 	@echo -e "${COLOUR_TXT_FMT_OPENING}Target 'demo'. For demo purposes only, copy over the the dbt project '${DBT_PROJECT_NAME}' to the Airflow DAGS repo and change required perms/copy required files.${COLOUR_TXT_FMT_CLOSING}"
 	@echo "------------------------------------------------------------------------------------------"
 	# copy over the dbt project to the Airflow DAGs repo.
-	# If a dbt project of the same name already exists in the AF dags repo, add a '_bkp' suffix.
+	# If a dbt project of the same name already exists in the AF dags repo, add a '_bkp' suffix to the dbt project in the AF dags repo
 	@if test -d ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}; \
-	then echo "# INFO: dbt project repo already exists" \
+	then echo "# INFO: dbt project '${DBT_PROJECT_NAME}' folder already exists in ${AF2_DAGS_PATH}/dbt/." \
+	&& echo "Rename existing dbt project and copy the generated dbt project into target Airflow DAGs repo." \
 	&& mv ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME} ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}_bkp \
 	&& cp -R ${DBT_PROJECT_NAME} ${AF2_DAGS_PATH}/dbt/; \
-	else echo "# INFO: dbt project repo does not exist. Copy the dbt project over." \
+	else echo "# INFO: dbt project repo does not exist in the AF DAGs repo. Copy the dbt project over." \
 	&& cp -R ${DBT_PROJECT_NAME} ${AF2_DAGS_PATH}/dbt/; \
 	fi
 	@chmod -R 777 ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}/logs
 	@chmod -R 777 ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}/target
 	# copy the user's RSA key path into the dbt profiles dir
-	@cp ${RSA_KEY_PATH} ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}/profiles/
-
-run_model: get_ips
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'run_model'. Run the dbt model.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
-	@cd ${DBT_PROJECT_NAME} && dbt run --profiles-dir profiles --models ${DBT_MODEL}
-
-clean: get_ips
-	@echo "------------------------------------------------------------------"
-	@echo -e "${COLOUR_TXT_FMT_OPENING}Target 'clean'. Remove any redundant files, e.g. downloads.${COLOUR_TXT_FMT_CLOSING}"
-	@echo "------------------------------------------------------------------"
-	@# remove any dbt project files if they already exist
-	@rm -rf ${DBT_PROJECT_NAME}
+	@cp ${SNOWFLAKE_PRIVATE_FILE} ${AF2_DAGS_PATH}/dbt/${DBT_PROJECT_NAME}/profiles/
