@@ -9,7 +9,8 @@ db_connection_params:
   snowflake_warehouse: # e.g., wh_svc_dbt_xs_${ENV}
   snowflake_role: # e.g., svc_dbt_${ENV}
   snowflake_src_db: # e.g., ${DATA_SRC}_${ENV}
-  snowflake_src_db_schema: # landed
+  snowflake_src_db_schema: # e.g., landed
+  snowflake_db_schema_incremental: # e.g., 'incremental'
 dbt_params:
   dbt_version: 1.2.0
   dbt_project_name: example_generated_dbt_project # e.g., dbt_${DATA_SRC} # name of the dbt project. Must be snake_case, i.e., letters, digits and underscores only, and cannot start with a digit.

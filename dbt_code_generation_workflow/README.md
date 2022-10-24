@@ -159,7 +159,7 @@ A `Makefile` has been used to orchestrate the steps required to set up a dbt pro
 ### iv. Generate dbt SQL objects in bulk
 
 * See `gen_dbt_sql_objs` in the `Makefile`.
-* This steps automates generatating (dbt) SQL files in bulk (either as: `snapshot` or `incremental [load]` SQL files) using Jinja templates. It does this using the python script `py/gen_dbt_sql_objs.py`.
+* This steps automates generating (dbt) SQL files in bulk (either as: `snapshot` or `incremental [load]` SQL files) using Jinja templates. It does this using the python script `py/gen_dbt_sql_objs.py`.
 * As with step 2 'Generate the dbt 'source properties' file', a key prerequisite for this step is for the user to supply a data-dictionary type input file (this time at the data source-level), to indicate per source table what the:
   * Primary key is
   * and what the 'last_updated_field' is per table

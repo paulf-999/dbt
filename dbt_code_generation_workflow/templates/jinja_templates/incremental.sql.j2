@@ -1,6 +1,6 @@
 {{ '{{' }}-
     config(
-        schema='raw_hist',
+        schema='{{ db_schema_incremental }}',
         materialized='incremental'
     )
 -{{ '}}' }}

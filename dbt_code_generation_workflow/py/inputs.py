@@ -55,8 +55,9 @@ def get_ips_for_gen_sql_objs():
     # TODO - the input for this would need to be manually changed
     data_src_ip_tbls["data_src_a"] = data["general_params"]["data_src_tables"]["data_src_a_src_tables"]
     snowflake_db = data["db_connection_params"]["snowflake_src_db"].replace("${DATA_SRC}", data_src).replace("${ENV}", env)
+    snowflake_db_schema_incremental = data["db_connection_params"]["snowflake_db_schema_incremental"]
 
-    return env, data_src, data_src_ip_tbls, snowflake_db
+    return env, data_src, data_src_ip_tbls, snowflake_db, snowflake_db_schema_incremental
 
 
 def get_ips_for_table_level_metadata():
@@ -79,7 +80,7 @@ def get_ips_for_src_properties():
 
     env = data["general_params"]["env"]
     data_src = data["data_src_params"]["data_src"]
-    snowflake_db = data["db_connection_params"]["snowflake_src_db"].replace("${DATA_SRC}", data_src)
+    src_snowflake_db = data["db_connection_params"]["snowflake_src_db"].replace("${DATA_SRC}", data_src).replace("${ENV}", env)
     src_db_schema = data["db_connection_params"]["snowflake_src_db_schema"]
 
     # data dictionary inputs
@@ -96,7 +97,7 @@ def get_ips_for_src_properties():
             for tbl in ip_tbls:
                 xls_sheet_names.append(tbl)
 
-    return env, data_src, snowflake_db, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename
+    return env, data_src, src_snowflake_db, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename
 
 
 def get_data_dictionary_args():

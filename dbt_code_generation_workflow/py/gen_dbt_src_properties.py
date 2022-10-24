@@ -89,12 +89,12 @@ def main():
     """Main orchestration routine"""
 
     # fetch inputs from the config file
-    env, data_src, snowflake_db, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename = inputs.get_ips_for_src_properties()
+    env, data_src, src_snowflake_db, src_db_schema, data_dictionary, xls_sheet_names, target_op_src_filename = inputs.get_ips_for_src_properties()
 
     # first write the 'header' of the source.yml file
     # fmt: off
     rendered_schema_header = jinja_env_source.get_template("source_header.yml.j2").render(
-        data_src=data_src, env=env, src_db=snowflake_db, src_db_schema=src_db_schema)
+        data_src=data_src, env=env, src_db=src_snowflake_db, src_db_schema=src_db_schema)
     # fmt: on
 
     # make the target dir if it doesn't exist
