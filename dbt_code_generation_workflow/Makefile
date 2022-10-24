@@ -114,6 +114,9 @@ get_ips:
 	$(eval PROGRAM=$(shell yq -r '.dbt_params.program' ${CONFIG_FILE}))
 
 validate_user_ip: get_ips
+	@echo "------------------------------------------------------------------"
+	@echo -e "${COLOUR_TXT_FMT_OPENING}Target: 'validate_user_ip'. Validate the user inputs.${COLOUR_TXT_FMT_CLOSING}"
+	@echo "------------------------------------------------------------------"
 	$(info [+] Validate the user inputs)
 	# INFO: 1) Verify the user has provided a value for the key 'data_src' in ip/config.yaml
 	@[ "${DATA_SRC}" ] || ( echo -e "\nError: 'data_src' key is empty in ip/config.yaml\n"; exit 1 )
