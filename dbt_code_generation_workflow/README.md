@@ -122,7 +122,7 @@ Assuming you have done this, do the following to add a new data source to your d
 
 A `Makefile` has been used to orchestrate the steps required to set up a dbt project. Whereby this dbt project also bundles in commonly used dbt packages, macros and templates to ensure best practice naming/structures are followed . The orchestration steps consist of:
 
-### i. Automation the dbt Project Setup
+### i. Automate the dbt Project Setup
 
 * See `initialise_dbt_project` in the `Makefile`.
 * This step automates the creation of a dbt project using inputs provided in `ip/config.yaml` to populate Jinja templates (see `templates` dir), as well as:
@@ -133,7 +133,7 @@ A `Makefile` has been used to orchestrate the steps required to set up a dbt pro
 
   * Include additional dbt macros, e.g.: `generate_schema_name`, as well as macros used for DQ testing.
 
-### ii. Generating the dbt 'source properties' file (`_source.yml`)
+### ii. Generate the dbt 'source properties' file (`_source.yml`)
 
 * See `gen_source_properties_file` in the `Makefile`.
 * This step automates the creation of the dbt source properties file (i.e., `_source.yml`) for each data source, using the python script `py/gen_dbt_src_properties.py`.
