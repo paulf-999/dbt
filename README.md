@@ -2,7 +2,7 @@
 
 ## dbt Code Generation Worflow
 
-Automation script(s) for dbt, namely to script:
+Automation scripts for dbt, namely to script:
 
 1) Setting up a dbt project and validate source DB connectivity.
 2) Generating a dbt resource properties file (`_source.yml`) using data from an input data dictionaries/metadata.
