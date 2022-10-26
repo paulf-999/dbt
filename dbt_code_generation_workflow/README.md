@@ -65,10 +65,10 @@ ${DBT_PROJECT_NAME}
 ├── tests
 │   └── generic
 │       └── sources
-│       |    └── existence
-│       |    |   └── raw_table_existence.sql
-│       |    └── row_count
-│       |    |   └── is_table_empty.sql
+│            ├── existence
+│            |   └── raw_table_existence.sql
+│            └── row_count
+│                └── is_table_empty.sql
 ├── README.md
 ├── dbt_project.yml
 └── packages.yml
