@@ -32,9 +32,7 @@ Automation scripts for dbt, namely to script:
 The goal of these scripts is to accelerate dbt development through these code generation scripts. Whereby these code generation script do the following:
 
 1. Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/incremental.sql.j2) patterns (templates).
-2. Automate the creation of the dbt resource property (.yml) files - which are key for implementing DQ checks across the dbt project.
-
-See `example_generated_dbt_project` for an example of the generated dbt project files.
+2. Automate the creation of the dbt resource property (.yml) files - which are key for implementing DQ checks across the dbt project (see `example_generated_dbt_project` for an example of the generated dbt project files.
 
 3. Recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
 
