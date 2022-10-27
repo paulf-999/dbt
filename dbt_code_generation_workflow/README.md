@@ -37,7 +37,7 @@ It does this by:
   * `dbt_utils`
   * `dbt_expectations`
   * `dbt-codegen`
-  * `dbt-project-evaluator`.
+  * `dbt-project-evaluator`
 * Include additional (generic) dbt source tests, e.g.:
   * `raw_table_existence`
   * `is_table_empty`
