@@ -6,4 +6,4 @@ The python files used in this repo are largely used in combination with Jinja te
 * `py/gen_dbt_sql_objs.py` - this script is used to generate dbt snapshot or incremental sql files in bulk, using the Jinja templates `templates/snapshot.sql.j2` and `templates/incremental.sql.j2`.
 * `py/gen_dbt_model_directory.py` - this script is used to recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
 
-For more information on the Jinja templates used by each of the Python scripts above, see: [`templates/README.md`](templates/README.md).
+For more information on the Jinja templates used by each of the Python scripts above, see: [`templates/README.md`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/README.md).

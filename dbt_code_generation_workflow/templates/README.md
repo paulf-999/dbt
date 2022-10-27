@@ -30,4 +30,4 @@ The only exception to this is the `models` directory. In order to recreate the [
 
 ## Example Jinja Template Output
 
-For examples of rendered Jinja template output, see [example_template_ops](templates/example_template_ops). The reason for showing these is because the templates are at times difficult to read, as a result of having to escape dbt's usage of curly braces.
+For examples of rendered Jinja template output, see [example_template_ops](https://github.com/paulf-999/dbt/tree/main/dbt_code_generation_workflow/templates/example_template_ops). The reason for showing these is because the templates are at times difficult to read, as a result of having to escape dbt's usage of curly braces.
