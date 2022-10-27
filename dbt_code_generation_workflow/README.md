@@ -1,6 +1,6 @@
 # dbt Code Generation Workflow
 
-Automation scripts to accelerate dbt development using code generation scripts. Whereby these code generation script do the following:
+Automation scripts to accelerate dbt development, namely to script:
 
 1. Automating the dbt project setup process, designing the project to follow best practices & include common best practice files.
 2. Automating the creation of the dbt `_source.yml` resource property file for a given data source using data from data dictionary-type inputs. Note: there's also a routine to add new data sources, see 'How to Add a New Data Source if the dbt Project Already Exists'.
