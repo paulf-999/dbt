@@ -4,7 +4,7 @@
 
 | Directory       | Description                  |
 | ----------------| ---------------------------- |
-| jinja_templates | Contains Jinja templates (i.e., files ending in `.j2`) that are rendered to generate output files. |
+| jinja_templates | Contains Jinja templates (i.e., files ending in `.j2`) that are rendered to generate files required by the dbt project. |
 | template_dirs   | Contains files/folders that follow best practice patterns and are copied over to the target dbt project. |
 
 ## `jinja_templates` Directory
