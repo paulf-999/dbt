@@ -1,7 +1,8 @@
 {{ '{{' }}-
     config(
         schema='{{ db_schema_incremental }}',
-        materialized='incremental'
+        materialized='incremental',
+        on_schema_change='{{ on_schema_change }}'
     )
 -{{ '}}' }}
 

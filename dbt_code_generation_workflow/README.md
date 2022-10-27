@@ -1,24 +1,24 @@
 # dbt Code Generation Workflow
 
-Automation scripts for dbt, namely to script:
+Automation scripts to accelerate dbt development using code generation scripts. Whereby these code generation script do the following:
 
-1) Setting up a dbt project and validate source DB connectivity.
-2) Generating a dbt resource properties file (`_source.yml`) using data from an input data dictionaries/metadata.
-3) Generating the `models` file/folder structure to follow [dbt's recommend project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview).
-4) Generating (dbt) SQL files in bulk either as: snapshots tables or incremental loads.
+1. Automating the dbt project setup process, designing the project to follow best practices & include common best practice files.
+2. Automating the creation of the dbt `_source.yml` resource property file for a given data source using data from data dictionary-type inputs. Note: there's also a routine to add new data sources, see 'How to Add a New Data Source if the dbt Project Already Exists'.
+3. Generating (dbt) SQL files in bulk either as: `snapshots` tables or `incremental` loads.
+4. Recreates the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
 
 ---
 
 ## Contents
 
 1. Goal
-2. Getting Started
+2. How to Run
 
 * Prerequisites
-* How-to Run
-* How-to Add a New Data Source if the dbt Project Already Exists
+* Steps
+* How to Add a New Data Source if the dbt Project Already Exists
 
-3. Overview
+3. Implementation Details
 
 * dbt Project Setup Automation
 * Generate the dbt 'source properties' file (`_source.yml`)
@@ -29,12 +29,26 @@ Automation scripts for dbt, namely to script:
 
 ## 1. Goal
 
-The goal of these scripts is to accelerate dbt development through these code generation scripts. Whereby these code generation script do the following:
+The goal of these scripts is to accelerate dbt development through the use of code generation scripts. These automation scripts look to:
 
-1. Generate (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/incremental.sql.j2) patterns (templates).
-2. Automate the creation of the dbt resource property (.yml) files - which are key for implementing DQ checks across the dbt project (see `example_generated_dbt_project` for an example of the generated dbt project files.
+1. Automating the dbt Project Setup Process by:
 
-3. Recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
+* Populating the `dbt_project.yml` and `profiles.yml` files & verifying the connectivity.
+* Providing a template `packages.yml` to bundle the install of best-practice dbt packages, e.g.: `dbt_utils`, `dbt_expectations`, `dbt-codegen` & `dbt-project-evaluator`.
+* Include additional (generic) dbt source tests, e.g.: `raw_table_existence`, `is_table_empty`
+* Include additional dbt macros, e.g.:
+  * `limit_row_count` - custom macro to limit row counts when in lower (e.g., dev) environments
+  * `generate_schema_name` - commonly revised dbt macro
+  * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
+
+2. Automating the creation of the dbt `_source.yml` resource property file for a given data source using data from data dictionary-type inputs. Note: there's also a routine to add new data sources.
+
+* And importantly include (dbt) `unique` and `not null` tests for every source primary key.
+* Add additional generic dbt tests (e.g., unique, not_null, accepted_values, relationships) per column, as indicated by the (template) input data dictionary.
+
+3. Generating (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/incremental.sql.j2) patterns (templates).
+
+4. Recreating the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
 
 ```bash
 ${DBT_PROJECT_NAME}
@@ -79,7 +93,7 @@ ${DBT_PROJECT_NAME}
 └── packages.yml
 ```
 
-## 2. Getting Started
+## 2. How to Run
 
 ### Prerequisites
 
@@ -87,7 +101,7 @@ Before you run the above commands, ensure you provide values for each of the key
 
 In addition, for a breakdown of each of the input args used for the data dictionary field mapping args, see [`ip/data_dic_field_mapping_prereqs.md`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/data_dic_field_mapping_prereqs.md).
 
-### How-to Run
+### Steps
 
 1. Update the input parameters within [`ip/config.yaml`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/config.yaml).
 2. Update the other input parameters within [`ip/data_dic_field_mapping_config.yaml`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/ip/data_dic_field_mapping_config.yaml).
@@ -97,12 +111,12 @@ In addition, for a breakdown of each of the input args used for the data diction
 
 * Set up a dbt project and validate source DB connectivity.
 * Generate a dbt resource properties file (`_source.yml`) using data from an input data dictionaries/metadata.
-* Generate the `models` file/folder structure to follow [dbt's recommend project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview).
+* Recreates the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview).
 * Generate (dbt) SQL files in bulk either as: snapshots tables or incremental loads.
 
 ---
 
-### How-to Add a New Data Source if the dbt Project Already Exists
+### How to Add a New Data Source if the dbt Project Already Exists
 
 Note: a prerequisite to this step is for you to have previously run `make install` - i.e., for you to have already generated the template dbt project.
 
@@ -118,7 +132,7 @@ Assuming you have done this, do the following to add a new data source to your d
 
 ---
 
-## 3. Overview
+## 3. Implementation Details
 
 A `Makefile` has been used to orchestrate the steps required to set up a dbt project. Whereby this dbt project also bundles in commonly used dbt packages, macros and templates to ensure best practice naming/structures are followed . The orchestration steps consist of:
 
@@ -145,22 +159,22 @@ A `Makefile` has been used to orchestrate the steps required to set up a dbt pro
     * Accepted values
     * Relationship constraints
 
-### iii. Generate the `models` file/folder structure to follow [dbt's recommend project structure](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview)
-
-* See the python script `py/gen_dbt_model_directory.py`.
-* The goal of this step is to recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview). Doing this ensures that:
-  * The `models` folder contains dedicated `staging`, `intermediate` and `marts` directories at the root.
-  * Dedicated `_sources.yml` & `models.yml` files are created within the `staging` folder.
-  * A dedicated `models.yml` file is created within the `marts` folder.
-  * And finally, example SQL files (each containing boilerplate CTE 'import, logical and final' section code) within each of these (saved as `.j2` templates to avoid compilation errors).
-
-### iv. Generate dbt SQL objects in bulk
+### iii. Generating (dbt) SQL files in bulk either as: `snapshots` tables or `incremental` loads
 
 * See `gen_dbt_sql_objs` in the `Makefile`.
 * This steps automates generating (dbt) SQL files in bulk (either as: `snapshot` or `incremental [load]` SQL files) using Jinja templates. It does this using the python script `py/gen_dbt_sql_objs.py`.
 * As with step 2 'Generate the dbt 'source properties' file', a key prerequisite for this step is for the user to supply a data-dictionary type input file (this time at the data source-level), to indicate per source table what the:
   * Primary key is
   * and what the 'last_updated_field' is per table
+
+### iv. Recreates the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview)
+
+* See the python script `py/gen_dbt_model_directory.py`.
+* The goal of this step is to recreate the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview). Doing this ensures that:
+  * The `models` folder contains dedicated `staging`, `intermediate` and `marts` directories at the root.
+  * Dedicated `_sources.yml` & `models.yml` files are created within the `staging` folder.
+  * A dedicated `models.yml` file is created within the `marts` folder.
+  * And finally, example SQL files (each containing boilerplate CTE 'import, logical and final' section code) within each of these (saved as `.j2` templates to avoid compilation errors).
 
 ### Note: Data Dictionary/Metadata Required for Features 2 and 3
 

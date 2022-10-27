@@ -60,7 +60,7 @@ def parse_data_src_summary_metadata(data_src, src_table):
     return primary_key_field, created_at_field, updated_at_field
 
 
-def render_jinja(data_src, src_table, env, snowflake_db, snowflake_db_schema_incremental):
+def render_jinja(data_src, src_table, env, snowflake_db, snowflake_db_schema_incremental, on_schema_change_behaviour):
     """Iterate through the input tables for a data_src and render/generate SQL op files"""
 
     # read in the CSV file to determine the 'unique_key' & 'load_date_field' fields
@@ -76,7 +76,8 @@ def render_jinja(data_src, src_table, env, snowflake_db, snowflake_db_schema_inc
         created_at=created_at_field,
         updated_at=updated_at_field,
         snowflake_src_db=snowflake_db,
-        db_schema_incremental=snowflake_db_schema_incremental
+        db_schema_incremental=snowflake_db_schema_incremental,
+        on_schema_change=on_schema_change_behaviour
     )
     # fmt: on
 
@@ -87,7 +88,7 @@ def main():
     """Main orchestration routine"""
 
     # fetch list of data_src tables
-    env, ip_data_src, data_src_ip_tbls, snowflake_db, snowflake_db_schema_incremental = inputs.get_ips_for_gen_sql_objs()
+    env, ip_data_src, data_src_ip_tbls, snowflake_db, snowflake_db_schema_incremental, on_schema_change_behaviour = inputs.get_ips_for_gen_sql_objs()
 
     # iterate through data_src_ip_tbls
     for data_src, src_tables in data_src_ip_tbls.items():
@@ -103,7 +104,7 @@ def main():
                 logger.debug("################################")
 
                 # render the SQL templates for each src_table
-                rendered_sql = render_jinja(data_src, src_table, env, snowflake_db, snowflake_db_schema_incremental)
+                rendered_sql = render_jinja(data_src, src_table, env, snowflake_db, snowflake_db_schema_incremental, on_schema_change_behaviour)
 
                 # generate a dedicated SQL file for each src_table
                 generate_sql_op(data_src, src_table, rendered_sql)
