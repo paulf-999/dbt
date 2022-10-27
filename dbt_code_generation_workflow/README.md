@@ -22,11 +22,6 @@ Note, re: step 3 - there's also a routine to add new data sources, see 'How to A
 
 3. Implementation Details
 
-* dbt Project Setup Automation
-* Generate the dbt 'source properties' file (`_source.yml`)
-* Generate dbt SQL objects in bulk
-* Note: Data Dictionary/Metadata Required for Features 2 and 3
-
 ---
 
 ### 1. Goal
