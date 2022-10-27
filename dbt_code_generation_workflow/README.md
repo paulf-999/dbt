@@ -36,8 +36,14 @@ The goal of these scripts is to accelerate dbt development through the use of co
 1. Automating the dbt Project Setup Process by:
 
 * Populating the `dbt_project.yml` and `profiles.yml` files & verifying the connectivity.
-* Providing a template `packages.yml` to bundle the install of best-practice dbt packages, e.g.: `dbt_utils`, `dbt_expectations`, `dbt-codegen` & `dbt-project-evaluator`.
-* Include additional (generic) dbt source tests, e.g.: `raw_table_existence`, `is_table_empty`
+* Providing a template `packages.yml` to bundle the install of best-practice dbt packages, e.g.:
+  * `dbt_utils`
+  * `dbt_expectations`
+  * `dbt-codegen`
+  * `dbt-project-evaluator`.
+* Include additional (generic) dbt source tests, e.g.:
+  * `raw_table_existence`
+  * `is_table_empty`
 * Include additional dbt macros, e.g.:
   * `limit_row_count` - custom macro to limit row counts when in lower (e.g., dev) environments
   * `generate_schema_name` - commonly revised dbt macro
