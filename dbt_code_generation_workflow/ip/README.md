@@ -1,4 +1,8 @@
-# General Parameters
+# Prerequisites
+
+Described below are the input config parameters read in from `ip/config.yaml` by the dbt code generation workflow scripts.
+
+## General Parameters
 
 | Parameter | Description | Example                  |
 | --------- | ---------------------------- | ------- |
