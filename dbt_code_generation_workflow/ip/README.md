@@ -28,9 +28,9 @@
 
 ## Input Metadata File Parameters
 
-| Parameter | Description | Example                  |
+| Parameter | Description                  | Example |
 | --------- | ---------------------------- | ------- |
-| table_level_metadata | * Input XLS file containing table-level metadata<br/>* This is used to capture the 'primary_key' & 'last_updated' for each src table across the data sources. | `ip/table_level_metadata.xlsx` |
+| table_level_metadata | * Input XLS file containing table-level metadata<br/>* This is used to capture the 'primary_key' & 'last_updated' for each src table across the data sources. | `ip/table_level_metadata.xlsx`
 | metadata_sheet_name | XLS sheet name to use | `Sheet1` |
 
 ## Data Source Parameters
