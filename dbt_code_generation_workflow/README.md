@@ -33,7 +33,7 @@ Note, re: step 3 - there's also a routine to add new data sources, see 'How to A
 
 The goal of these scripts is to accelerate dbt development through the use of code generation scripts. These automation scripts look to:
 
-1. Automating the dbt Project Setup Process by:
+### 1. Automating the dbt Project Setup Process by:
 
 * Populating the `dbt_project.yml` and `profiles.yml` files & verifying the connectivity.
 * Providing a template `packages.yml` to bundle the install of best-practice dbt packages, e.g.:
@@ -49,14 +49,16 @@ The goal of these scripts is to accelerate dbt development through the use of co
   * `generate_schema_name` - commonly revised dbt macro
   * `grant_select_on_schemas` - dbt-recommended macro to grant access to all tables in a schema
 
-2. Automating the creation of the dbt `_source.yml` resource property file for a given data source using data from data dictionary-type inputs. Note: there's also a routine to add new data sources.
+### 2. Automating the creation of the dbt `_source.yml` resource property file for a given data source
 
 * And importantly include (dbt) `unique` and `not null` tests for every source primary key.
 * Add additional generic dbt tests (e.g., unique, not_null, accepted_values, relationships) per column, as indicated by the (template) input data dictionary.
 
-3. Generating (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/incremental.sql.j2) patterns (templates).
+### 3. Generating (dbt) sql files in bulk that use the [`snapshot`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/snapshot.sql.j2) and [`incremental`](https://github.com/paulf-999/dbt/blob/main/dbt_code_generation_workflow/templates/jinja_templates/incremental.sql.j2) patterns (templates).
 
-4. Recreating the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview), as shown below:
+### 4. Recreating the [target dbt project structure recommended by dbt](https://docs.getdbt.com/guides/best-practices/how-we-structure/1-guide-overview#guide-structure-overview)
+
+As shown below:
 
 ```bash
 ${DBT_PROJECT_NAME}
