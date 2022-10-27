@@ -33,7 +33,9 @@ Note, re: step 3 - there's also a routine to add new data sources, see 'How to A
 
 The goal of these scripts is to accelerate dbt development through the use of code generation scripts. These automation scripts look to:
 
-### 1. Automate the dbt Project Setup Process by:
+### 1. Automate the dbt Project Setup Process:
+
+It does this by:
 
 * Populating the `dbt_project.yml` and `profiles.yml` files & verifying the connectivity.
 * Providing a template `packages.yml` to bundle the install of best-practice dbt packages, e.g.:
