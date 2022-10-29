@@ -31,11 +31,10 @@ repos:
     -   id: pyupgrade # Automatically upgrade syntax for newer versions
         args: [--py36-plus]
 
-#-   repo: https://github.com/jumanjihouse/pre-commit-hooks
-#    rev: 3.0.0
-#    hooks:
-#    -   id: markdownlint # Lint .md files - configure in .markdownlint.rb
-#        args: [-s, .markdownlint.rb]
-#    -   id: shellcheck # Ensure shell scripts conform to shellcheck
-#    -   id: shfmt # Check shell style with shfmt
-#
+-   repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 3.0.0
+    hooks:
+    -   id: markdownlint # Lint .md files - configure in .markdownlint.rb
+        args: [-s, .markdownlint.rb]
+    -   id: shellcheck # Ensure shell scripts conform to shellcheck
+    -   id: shfmt # Check shell style with shfmt
