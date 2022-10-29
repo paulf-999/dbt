@@ -40,3 +40,12 @@ logs
 # Runtime data
 pids
 *.pid
+
+# ignore this project - this is a clone of GitLab's dbt project containing lots of useful best practices
+2_gitlab_dbt_project/
+# similarly, ignore this repo below
+3_w_dbt_accelerators/
+4_other/old/dbt_accelerators
+4_other/tbc/
+w_dbt_project_setup_automation
+data_dictionary.xlsx

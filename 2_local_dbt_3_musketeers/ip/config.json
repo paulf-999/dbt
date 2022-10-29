@@ -1,0 +1,15 @@
+{
+    "SnowflakeParameters" : {
+        "SnowflakeUsername" : "",
+        "SnowflakePrivateKey" : ""
+    },
+    "DbtParameters" : {
+        "DbtProfileName" : "",
+        "DbtProjectName" : "",
+        "DbtModel" : "",
+        "Program" : ""
+    },
+    "GeneralParameters" : {
+        "Env" : ""
+    }
+}

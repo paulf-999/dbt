@@ -1,0 +1,10 @@
+packages:
+  - git: "https://github.com/paulf-999/eg_dbt_project_1.git"
+    subdirectory: "bike_shop_sub_proj1"
+    revision: "main"
+  - git: "https://github.com/paulf-999/eg_dbt_project_2.git"
+    subdirectory: "bike_shop_sub_proj2"
+    revision: "main"
+  - git: "https://github.com/paulf-999/eg_dbt_project_3.git"
+    subdirectory: "bike_shop_sub_proj3"
+    revision: "main"

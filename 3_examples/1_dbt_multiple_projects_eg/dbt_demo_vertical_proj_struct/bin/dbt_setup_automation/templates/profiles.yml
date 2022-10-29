@@ -1,0 +1,15 @@
+${DBT_PROFILE_NAME}:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('${PROGRAM}_SNOWFLAKE_ACCOUNT') }}"
+      role: "{{ env_var('${PROGRAM}_DBT_SVC') }}"
+      user: "{{ env_var('${PROGRAM}_DBT_USER') }}"
+      password: "{{ env_var('${PROGRAM}_DBT_PASS') }}"
+
+      database: "{{ env_var('${PROGRAM}_DB') }}"
+      warehouse: "{{ env_var('${PROGRAM}_WH') }}"
+      schema: "{{ env_var('${PROGRAM}_SCHEMA') }}"
+      threads: 4
+      client_session_keep_alive: False
