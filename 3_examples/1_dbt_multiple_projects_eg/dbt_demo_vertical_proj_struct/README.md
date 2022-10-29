@@ -1,1 +1,0 @@
-# dbt_demo_vertical_proj_struct
