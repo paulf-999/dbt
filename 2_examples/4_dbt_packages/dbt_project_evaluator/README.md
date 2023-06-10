@@ -1,4 +1,4 @@
-# dbt_project_evaluator (version 0.2.0)
+# dbt_project_evaluator (version 0.6.2)
 
 ## Prerequisites
 
