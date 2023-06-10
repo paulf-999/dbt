@@ -1,10 +1,12 @@
-# dbt_project_evaluator (version 0.2.0)
+# dbt_project_evaluator (version 0.6.2)
+
+Note: Look to make use of version >=0.6.0. Previous versions had poor documentation, compared to the docs found for version >=0.5 (e.g., https://dbt-labs.github.io/dbt-project-evaluator/0.6/rules/modeling/)
 
 ## Prerequisites
 
 **dbt Packages**
 
-* `dbt_utils` package: requires version 0.9.2
+* `dbt_utils` package: requires version 1.0.0
 
 **Snowflake Role Permissions**
 
