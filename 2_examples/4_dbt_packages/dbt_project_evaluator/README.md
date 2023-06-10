@@ -19,3 +19,9 @@ The Snowflake role used will require (at least)
 
 1. Install the package (see `packages.yml`), by running `dbt deps`.
 2. run: `dbt build --select package:dbt_project_evaluator`
+
+## How to use, re: analysis of output datasets
+
+As a reference point see: https://dbt-labs.github.io/dbt-project-evaluator/0.6/rules/modeling/
+
+However, I recommend looking at the output of the dbt tests that are running following `dbt build --select package:dbt_project_evaluator`
