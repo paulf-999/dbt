@@ -1,24 +1,23 @@
-# ELementary
+# dbt Package: [Elementary](https://www.elementary-data.com/)
 
-## Prerequisites
+## Contents
 
-**1. Elementary CLI**
+1. Prerequisites
+2. How to use
+3. Example Usage
 
-To install the monitor module run: `pip install elementary-data`
+---
 
-Run one of the following commands based on your platform (no need to run all):
+## 1. Prerequisites
 
-`pip install 'elementary-data[snowflake]'`
+|   | Prerequisite               | Description                                                      | Steps |
+| - | -------------------------- | ---------------------------------------------------------------- | ----- |
+| 1 | Elementary CLI             | This is required to generate the Elementary test report          | 1. Install the monitor module by running the command:<br/> `pip install elementary-data`<br/> 2. Install the platform-specific module:<br/>`pip install 'elementary-data[snowflake]'`.<br/>3. Run `edr --help` to verify whether the installation was successful. |
+| 2 | Snowflake Role Permissions | Ensure the Snowflake role used has permission to create schemas. | `GRANT CREATE SCHEMA ON DATABASE <DB>` |
+| 3 | `dbt_project.yml`          | Add the following to models section of the `dbt_project.yml` file to ensure all elementary artefacts are written to the schema called 'elementary' | See below |
+| 4 | Generate a profile for Elementary          | Add the following to models section of the `dbt_project.yml` file to ensure all elementary artefacts are written to the schema called 'elementary' | Run the following to create a connection profile for elementary:<br/><br/>`dbt run-operation elementary.generate_elementary_cli_profile`<br/><br/>**Note:** Ensure that you fill in your password and any other missing fields after you paste the profile in your local `profiles.yml` file. |
 
-Run `edr --help` in order to ensure the installation was successful.
-
-**2. Snowflake Role Permissions**
-
-Make sure your user has permissions to create schemas
-
-**3. `dbt_project.yml`**
-
-Add the following to models section of the `dbt_project.yml` file to ensure all elementary artefacts are written to the schema called 'elementary`:
+**Code for prerequisite 3: `dbt_project.yml`**
 
 ```yaml
 models:
@@ -30,17 +29,9 @@ models:
     enabled: "{{ target.name in ['prod'] }}"
 ```
 
-**4. Generate a profile for Elementary**
-
-Run the following to create a connection profile for elementary:
-
-`dbt run-operation elementary.generate_elementary_cli_profile`
-
-Note: Ensure that you fill in your password and any other missing fields after you paste the profile in your local `profiles.yml` file.
-
 ---
 
-## How to use
+## 2. How to use
 
 1. Install the package by running `dbt deps`
 2. Run to create the package models: `dbt run --select elementary`
@@ -55,7 +46,9 @@ After you ran your tests, we recommend that you ensure that the results were loa
 
 Once the elementary dbt package has been installed and configured, your test results, run results and dbt artifacts will be loaded to elementary schema tables.
 
-## Example Usage
+---
+
+## 3. Example Usage
 
 With all of the above in place, you can now generate your test report UI by running the following command:
 
