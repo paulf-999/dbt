@@ -33,26 +33,27 @@ models:
 
 ## 2. How to use
 
-1. Install the package by running `dbt deps`
-2. Run to create the package models: `dbt run --select elementary`
-
-This will mostly create empty tables, that will be updated with artifacts, metrics and test results in your future dbt executions.
-
-3. Run tests, i.e., type: `dbt test`
-
-After you ran your tests, we recommend that you ensure that the results were loaded to `elementary_test_results` table.
+| Step | Description                  | Command |
+| -----| -----------------------------| -------|
+| 1    | Install the package by running `dbt deps` | `dbt deps` |
+| 2    | Create the (elementary) dbt models by running ``dbt run --select elementary`.<br/><br/>This will mostly create empty tables, that will be updated with artifacts, metrics and test results in your future dbt executions. | `dbt run --select elementary` |
+| 3    | Run your dbt tests, i.e., type: `dbt test`<br/><br/>After you ran your tests, we recommend that you ensure that the results were loaded to `elementary_test_results` table. | `dbt test` |
 
 ### What Happens Next?
 
-Once the elementary dbt package has been installed and configured, your test results, run results and dbt artifacts will be loaded to elementary schema tables.
+Once the elementary dbt package has been installed and configured, the following will be loaded into your elementary schema tables:
+
+* dbt test results
+* dbt run results
+* and dbt artifacts.
 
 ---
 
 ## 3. Example Usage
 
-With all of the above in place, you can now generate your test report UI by running the following command:
+With all of the above in place, you can now generate your test report UI by running the command: `edr report`.
 
-`edr report`
+### What does this command do?
 
 The command will use the provided connection profile to access the data warehouse, read from the Elementary tables, and generate the report as an HTML file.
 
