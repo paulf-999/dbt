@@ -1,9 +1,0 @@
-stages:
-  - code
-
-demo_workflow:
-  rules:
-  #only runs the following if you're on a main branch
-    - if: '$CI_COMMIT_BRANCH =~ /^main/'
-  stage: code
-  trigger: paulf-999/dbt_demo_vertical_proj_struct

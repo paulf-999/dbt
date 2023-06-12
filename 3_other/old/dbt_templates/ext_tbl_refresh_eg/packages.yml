@@ -1,3 +1,0 @@
-packages:
-  - git: fishtown-analytics/dbt_external_tables
-    revision: 0.6.1

@@ -1,8 +1,0 @@
-version: '3'
-services:
-  dbt:
-    image: fishtownanalytics/dbt:1.0.0
-    volumes:
-      - ./dbt_aac:/work
-      - ~/.ssh/snowflake-rsa-key.p8:/secrets/snowflake
-    working_dir: /work

@@ -1,4 +1,0 @@
-packages:
-    # https://docs.elementary-data.com
-    - package: elementary-data/elementary
-      version: 0.8.0
