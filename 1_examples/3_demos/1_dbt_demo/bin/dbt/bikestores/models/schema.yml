@@ -1,0 +1,31 @@
+version: 2
+
+sources:
+  - name: bike_sales
+    database: bikestores_raw_db
+    schema: sales
+    tables:
+      - name: customers
+      - name: orders
+      - name: order_items
+      - name: staffs
+      - name: stores
+  - name: bike_production
+    database: bikestores_raw_db
+    schema: production
+    tables:
+      - name: brands
+        columns:
+          - name: brand_id
+            description: Primary key of the table
+            tests:
+              - unique
+              - not_null
+          - name: brand_name
+            description: Brand name of the bike
+            tests:
+              - unique
+              - not_null
+      - name: categories
+      - name: products
+      - name: stocks

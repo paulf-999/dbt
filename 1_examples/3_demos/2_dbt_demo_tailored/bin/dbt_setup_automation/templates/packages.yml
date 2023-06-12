@@ -1,0 +1,4 @@
+packages:
+  - local: dbt_sub_projects/data_quality
+  - local: dbt_sub_projects/snapshot_cdc_processing
+  - local: dbt_sub_projects/dwh

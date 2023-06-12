@@ -1,0 +1,15 @@
+dbt_svc_profile:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('BIKESTORES_SNOWFLAKE_ACCOUNT') }}"
+      role: "{{ env_var('BIKESTORES_DBT_SVC') }}"
+      user: "{{ env_var('BIKESTORES_DBT_USER') }}"
+      password: "{{ env_var('BIKESTORES_DBT_PASS') }}"
+
+      database: "{{ env_var('BIKESTORES_DB') }}"
+      warehouse: "{{ env_var('BIKESTORES_WH') }}"
+      schema: "{{ env_var('BIKESTORES_SCHEMA') }}"
+      threads: 4
+      client_session_keep_alive: False

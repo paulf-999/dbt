@@ -1,0 +1,15 @@
+{{ DBT_PROFILE_NAME }}:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: {{ DBT_SNOWFLAKE_ACCOUNT }}
+      role: {{ DBT_SNOWFLAKE_ROLE }}
+
+      user: {{ DBT_SNOWFLAKE_USER }}
+      password: {{ DBT_SNOWFLAKE_PASS }}
+
+      database: {{ DBT_SNOWFLAKE_DB }}
+      warehouse: {{ DBT_SNOWFLAKE_WH }}
+      schema: {{ DBT_SNOWFLAKE_SCHEMA }}
+      threads: 200

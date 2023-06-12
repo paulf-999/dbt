@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: eg_data_src
+    database: "{{ env_var('RAW_DB') }}"
+    schema: eg_data_src
+    tables:
+      - name: ext_tbl_eg
+        external:
+          location: "@eg_stage"
+          file_format: "UTILITIES.CSV_FMT"
+          pattern: '.*\<PATH TO SRC FILES>\/(?:.*)(?:\.csv)'
+          columns:
+            - name: value
+              data_type: variant
+      - name: tbl_eg

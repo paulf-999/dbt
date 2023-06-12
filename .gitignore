@@ -1,0 +1,51 @@
+# Common credential files
+*.p8
+*creds*
+
+# Private Files
+*.json
+*.csv
+*.csv.gz
+*.tsv
+*.tsv.gz
+*.xlsx
+
+# Mac/OSX
+.DS_Store
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+
+
+# Distribution / packaging
+dist/
+downloads/
+
+# Unit test / coverage reports
+.pytest_cache/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+
+# ignore this project - this is a clone of GitLab's dbt project containing lots of useful best practices
+2_gitlab_dbt_project/
+# similarly, ignore this repo below
+3_w_dbt_accelerators/
+4_other/old/dbt_accelerators
+4_other/tbc/
+w_dbt_project_setup_automation
+data_dictionary.xlsx

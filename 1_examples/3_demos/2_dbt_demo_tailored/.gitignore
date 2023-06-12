@@ -1,0 +1,4 @@
+bin/snowsql_rt.*
+bike_shop_copy_orig/
+logs/
+target/

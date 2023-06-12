@@ -1,0 +1,53 @@
+version: 2
+
+sources:
+  - name: eg_data_src
+    database: eg_src_db
+    schema: eg_db_schema
+    tables:
+      - name: Orders_2
+        columns:
+          - name: TRANSACTION_ID
+            description: Unique Sales transaction Identifier for each order- can have multiple order lines(Order Line Ids) linked to one Order ID based on how many products are purchased on one order.
+          - name: TIMESTAMP
+            description: Timestamp for the Sales transaction
+          - name: PROMOTION_IDS
+            description: Unique identifier for Promotions/Campaigns/Sales linked to the sales transaction
+          - name: TOTAL_PRICE
+            description: Total price paid for the full order including gst excluding delivery fee
+          - name: SPLIT_PAYMENT_IND
+            description: Flag to indicate if the payment is split
+          - name: CASH_AMNT
+            description: Cash Amt
+          - name: EFTCARD_AMNT
+            description: Card Amt
+          - name: GIFTCARD_AMNT
+            description: Gift Card Amt
+          - name: CHANGE_AMNT
+            description: Change Amt
+          - name: CASHOUT_AMNT
+            description: Cash out
+          - name: DISCOUNT
+            description: total discount amount applied on the order
+          - name: TRANSACTION_STATUS
+            description: Flag to indicate if Transaction declined/Approved- Require only Approved transactions
+          - name: SALE_TYPE
+            description: TransactionType(Sale/Refund/Exchange/Voided)
+          - name: GST
+            description: total gst at order level
+          - name: TENDER_TYPE
+            description: payment method applied on the payment- cash/credit card/after pay/paypal/direct billing etc. (Also any difference in timing of payment? i.e. upfront / payable within X days)
+          - name: CUSTOMERID
+            description: Unique identifier of Customer who placed the order
+          - name: LOCATION_CODE
+            description: Unique identifier of the store(physical/online where there are multiple online stores like ebay/division website etc.) where the transaction is made
+          - name: DISCOUNT
+            description: Discount amount applied for employees
+          - name: ONLINE_STORE_URL
+            description: URL of the online store where the order was made
+          - name: CUSTOMER_TYPE
+            description: Indicate customer types (i.e. retail / traders)
+          - name: ORDER_TYPE
+            description: Order type (i.e. Wholesale / retail)
+          - name: ORDER_PLATFORM
+            description: How customers placed order (i.e. InStore/Online/App/Other)
