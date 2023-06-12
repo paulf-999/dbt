@@ -9,11 +9,6 @@
 
 ## 1. Prerequisites
 
-| Folder | Description                  |
-| -------| -----------------------------|
-| folder | Contains files related to... |
-| folder | Contains files related to... |
-
 |   | Related to                 | Prerequisite Description                                        | Steps |
 | - | -------------------------- | ------------------------------------------------------------------------------- | ----- |
 | 1 | Snowflake Role Permissions | Grant dbt's role access to the snowflake database. | Run the command:<br/><br/>`GRANT imported privileges on database snowflake TO ROLE <your_dbt_role_name>;` |
@@ -42,6 +37,7 @@ query-comment:
   comment: '{{ dbt_snowflake_monitoring.get_query_comment(node) }}'
   append: true # Snowflake removes prefixed comments.
 ```
+
 ---
 
 ## 2. Example Usage
