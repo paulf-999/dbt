@@ -1,19 +1,28 @@
 # dbt_snowflake_monitoring
 
-## Prerequisites
+## Contents
 
-**1. Snowflake Role Permissions**
+1. Prerequisites
+2. Example Usage
 
-Grant dbt's role access to the snowflake database:
+---
 
-`GRANT imported privileges on database snowflake TO ROLE <your_dbt_role_name>;`
+## 1. Prerequisites
 
-**2. `dbt_project.yml`**
+| Folder | Description                  |
+| -------| -----------------------------|
+| folder | Contains files related to... |
+| folder | Contains files related to... |
 
-Part 1 - Enable Query Tags
+|   | Related to                 | Prerequisite Description                                        | Steps |
+| - | -------------------------- | ------------------------------------------------------------------------------- | ----- |
+| 1 | Snowflake Role Permissions | Grant dbt's role access to the snowflake database. | Run the command:<br/><br/>`GRANT imported privileges on database snowflake TO ROLE <your_dbt_role_name>;` |
+| 2 | `dbt_project.yml`          | Enable Query Tags              | 1. First, make sure to remove any existing `+query_tag: dbt`<br/><br/>2. Then add the config described below underneath the heading 'Code: Enable Query Tags' to your `dbt_project.yml` file. |
+| 3 | `dbt_project.yml`          | Enable Query Comments          | To configure the query comments, add the config described below underneath the heading 'Code: Enable Query Comments' to your `dbt_project.yml` file. |
 
-1. First, make sure to remove any existing `+query_tag: dbt`
-2. Then add the following to your `dbt_project.yml` file:
+**Config: Enable Query Tags**
+
+Add the following to your `dbt_project.yml` file:
 
 ```yaml
 dispatch:
@@ -24,7 +33,7 @@ dispatch:
       - dbt
 ```
 
-Part 2 - Enable Query Comments
+**Config: Enable Query Comments**
 
 To configure the query comments, add the following config to `dbt_project.yml`:
 
@@ -33,10 +42,11 @@ query-comment:
   comment: '{{ dbt_snowflake_monitoring.get_query_comment(node) }}'
   append: true # Snowflake removes prefixed comments.
 ```
+---
 
-## Example Usage
+## 2. Example Usage
 
-1. Set default DB & Schema
+1. Set the default DB & Schema
 
 ```sql
 use database [dbt-snowflake-monitoring model database];
@@ -44,4 +54,3 @@ use schema [dbt-snowflake-monitoring model schema];
 ```
 
 2. Reuse the sample queries provided (see https://select.dev/docs/dbt-snowflake-monitoring/example-usage)
-
