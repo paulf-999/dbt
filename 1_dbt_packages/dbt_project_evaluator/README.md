@@ -13,10 +13,10 @@ Note: Look to make use of version >=0.6.0. Previous versions had poor documentat
 ## 1. Prerequisites
 
 
-|   | Prerequisite                       | Description                                                      | Steps |
-| - | ---------------------------------- | ---------------------------------------------------------------- | ----- |
-| 1 | dbt package: `dbt_utils` v.1.0.0   | This requires `dbt_utils` version 1.0.0 | - |
-| 2 | Snowflake Role Permissions | The Snowflake role used will require (at least) - <br/><br/>* Create Table/View permissions in the DB & Schema<br/>* (If the schema doesn't exist) - the ability to create a schema | - |
+|   | Prerequisite                       | Description                                                      |
+| - | ---------------------------------- | ---------------------------------------------------------------- |
+| 1 | dbt package: `dbt_utils` v.1.0.0   | This requires `dbt_utils` version 1.0.0 |
+| 2 | Snowflake Role Permissions | The Snowflake role used will require (at least) - <br/><br/>* Create Table/View permissions in the DB & Schema<br/>* (If the schema doesn't exist) - the ability to create a schema |
 
 ---
 
