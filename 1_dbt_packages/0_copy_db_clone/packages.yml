@@ -1,0 +1,5 @@
+---
+packages:
+    # https://hub.getdbt.com/montreal-analytics/snowflake_utils/latest/
+    - package: Montreal-Analytics/snowflake_utils
+      version: 0.5.0
