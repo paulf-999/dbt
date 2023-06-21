@@ -11,7 +11,7 @@
 
 ## 1. Background
 
-See (https://select.dev/docs/dbt-snowflake-monitoring)[dbt_snowflake_monitoring]
+See [dbt_snowflake_monitoring](https://select.dev/docs/dbt-snowflake-monitoring).
 
 ---
 
