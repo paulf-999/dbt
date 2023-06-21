@@ -56,8 +56,8 @@ query-comment:
 
 Inside the dbt package files (see dbt_packages/dbt_snowflake_monitoring), to keep costs down, I recommend altering two of the out of the box queries:
 
-`sql_query_history`
-and `stg_access_history`
+* `sql_query_history`
+* and `stg_access_history`
 
 So that the above two queries instead only queries the Snowflake `ACCOUNT_USAGE` schema for the previous month of data.
 
