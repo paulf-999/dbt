@@ -22,7 +22,7 @@ repos:
           - id: trailing-whitespace # trims trailing whitespace.
       # Git hooks
           - id: no-commit-to-branch # prevents users from pushing changes to specific (protected) branches
-            args: [--branch, master, --pattern, release/.*]
+            args: [--branch, main, --pattern, release/.*]
           - id: check-merge-conflict # checks for files that contain merge conflict strings.
       # JSON hooks
           - id: check-json # checks json files for parseable syntax.
@@ -34,7 +34,7 @@ repos:
       # Python hooks
           - id: check-ast # checks whether files parse as valid python.
           - id: name-tests-test # verifies Python test files are named correctly - i.e., ensure py tests match .*_test\.py
-          - id: requirements-txt-fixer # sorts entries in requirements.txt.
+            args: [--pytest-test-first]
 
   ######################################################################################################################
   # Technology-specific linters
@@ -47,15 +47,20 @@ repos:
             args: [--dialect, snowflake, --disregard-sqlfluffignores]
             additional_dependencies: [dbt-core==1.3, dbt-snowflake==1.3, sqlfluff-templater-dbt==2.0.2]
 
-  # - repo: https://github.com/dbt-checkpoint/dbt-checkpoint
-  # - repo: https://github.com/Montreal-Analytics/dbt-gloss
-  #   rev: 1.0.1  # used to ensure that our dbt standards are upheld
-  #   hooks:
-  #     - id: dbt-docs-generate
-  #       args: ["--cmd-flags", "++project-dir", "example_generated_dbt_project/",  "++profiles-dir", "example_generated_dbt_project/profiles"]  # yamllint disable-line
-  #     - id: check-source-has-tests-by-name
-  #       args: ["--manifest", "example_generated_dbt_project/target/manifest.json", "--tests", "unique=1", "not_null=1", "--"]
-  #     - id: check-source-table-has-description
+    - repo: https://github.com/dbt-checkpoint/dbt-checkpoint # used to ensure that our dbt standards are upheld
+      rev: v1.1.1
+      hooks:
+      # it's recommend to first run this hook as it generates the manifest.json and catalog.json files
+      # whereby manifest.json and catalog.json are needed for many of the dbt-checkpoint hooks
+          - id: dbt-docs-generate
+      # args: ["--cmd-flags", "++project-dir", "example_generated_dbt_project/",  "++profiles-dir", "example_generated_dbt_project/profiles"]  # yamllint disable-line
+          - id: check-model-name-contract # Ex: all models in models/staging/ can only have base_ or stg_ prefixes
+            name: dbt_naming_staging_layer # rename the hook
+            args: [--pattern, (base_|stg_).*]
+            files: models/staging/
+      # - id: check-source-has-tests-by-name
+      #   args: ["--manifest", "example_generated_dbt_project/target/manifest.json", "--tests", "unique=1", "not_null=1", "--"]
+      # - id: check-source-table-has-description
 
     - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
       rev: 0.2.1 # or other specific tag
