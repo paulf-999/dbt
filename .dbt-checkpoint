@@ -1,0 +1,3 @@
+version: 1
+dbt-project-dir: {{ dbt_project_name }}
+disable-tracking: true
