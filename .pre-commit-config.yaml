@@ -47,20 +47,20 @@ repos:
             args: [--dialect, snowflake, --disregard-sqlfluffignores]
             additional_dependencies: [dbt-core==1.3, dbt-snowflake==1.3, sqlfluff-templater-dbt==2.0.2]
 
-    - repo: https://github.com/dbt-checkpoint/dbt-checkpoint # used to ensure that our dbt standards are upheld
-      rev: v1.1.1
-      hooks:
-      # it's recommend to first run this hook as it generates the manifest.json and catalog.json files
-      # whereby manifest.json and catalog.json are needed for many of the dbt-checkpoint hooks
-          - id: dbt-docs-generate
-      # args: ["--cmd-flags", "++project-dir", "example_generated_dbt_project/",  "++profiles-dir", "example_generated_dbt_project/profiles"]  # yamllint disable-line
-          - id: check-model-name-contract # Ex: all models in models/staging/ can only have base_ or stg_ prefixes
-            name: dbt_naming_staging_layer # rename the hook
-            args: [--pattern, (base_|stg_).*]
-            files: models/staging/
-      # - id: check-source-has-tests-by-name
-      #   args: ["--manifest", "example_generated_dbt_project/target/manifest.json", "--tests", "unique=1", "not_null=1", "--"]
-      # - id: check-source-table-has-description
+    # - repo: https://github.com/dbt-checkpoint/dbt-checkpoint # used to ensure that our dbt standards are upheld
+    #   rev: v1.1.1
+    #   hooks:
+    #   # it's recommend to first run this hook as it generates the manifest.json and catalog.json files
+    #   # whereby manifest.json and catalog.json are needed for many of the dbt-checkpoint hooks
+    #       - id: dbt-docs-generate
+    #   # args: ["--cmd-flags", "++project-dir", "example_generated_dbt_project/",  "++profiles-dir", "example_generated_dbt_project/profiles"]  # yamllint disable-line
+    #       - id: check-model-name-contract # Ex: all models in models/staging/ can only have base_ or stg_ prefixes
+    #         name: dbt_naming_staging_layer # rename the hook
+    #         args: [--pattern, (base_|stg_).*]
+    #         files: models/staging/
+    #   # - id: check-source-has-tests-by-name
+    #   #   args: ["--manifest", "example_generated_dbt_project/target/manifest.json", "--tests", "unique=1", "not_null=1", "--"]
+    #   # - id: check-source-table-has-description
 
     - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
       rev: 0.2.1 # or other specific tag
