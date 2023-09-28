@@ -68,11 +68,11 @@ FROM {{ source('snowflake_account_usage', 'query_history') }}
 
 -- must use end time in case query hasn't completed
 -- to reduce the compute of the query, we add this condition to only query the previous month of data
-{% if is_incremental() %}
-    WHERE
-        start_time > current_date - 30
-        AND end_time > (SELECT max(end_time) FROM {{ this }})
-{% endif %}
+--{% if is_incremental() %}
+--    WHERE
+--        start_time > current_date - 30
+--        AND end_time > (SELECT max(end_time) FROM {{ this }})
+--{% endif %}
 
 WHERE start_time > current_date - 30
 ORDER BY start_time

@@ -32,7 +32,6 @@ Add the following to your `dbt_project.yml` file:
 dispatch:
   - macro_namespace: dbt
     search_order:
-      - <YOUR_PROJECT_NAME>
       - dbt_snowflake_monitoring
       - dbt
 ```
@@ -65,9 +64,17 @@ See the sql files within this directory for examples of what's needed.
 
 3. Run the models inside of the package by running the following inside a terminal:
 
-`dbt build --select package:dbt_snowflake_monitoring --profile=<target profile>`.
+`dbt build --select package:dbt_snowflake_monitoring`.
 
-E.g.: `dbt build --select package:dbt_snowflake_monitoring --profile=operations`
+E.g.: `dbt build --select package:dbt_snowflake_monitoring`
+
+Note: to write the output to a different database, run:
+
+`dbt build --select package:dbt_snowflake_monitoring --target=<target>`
+
+E.g.
+
+`dbt build --select package:dbt_snowflake_monitoring --target=operations`
 
 ---
 
