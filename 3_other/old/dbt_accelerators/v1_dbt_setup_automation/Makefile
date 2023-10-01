@@ -18,18 +18,16 @@ deps:
 	@brew install gnu-sed
 	@brew install jq
 	@pip install envsubst
-.PHONY: deps
 
 install:
 	@make init_dbt_project
 	@make setup_dbt_project_file
 	@make validate_conn
 	@make copy_dbt_project_files
-.PHONY: install
 
 clean:
 	$(info [+] Remove any redundant files, e.g. downloads)
-.PHONY: clean
+
 
 #############################################################################################
 # Targets used for dbt setup

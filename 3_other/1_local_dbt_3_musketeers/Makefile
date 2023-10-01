@@ -1,4 +1,8 @@
-# Usage:
+SHELL = /bin/sh
+
+#================================================================
+# Usage
+#================================================================
 # make installations	# install the package for the first time, managing dependencies & performing a housekeeping cleanup too
 # make deps				# just install the dependencies
 # make install			# just perform the install
@@ -10,7 +14,7 @@ CONFIG_FILE := ip/config.json
 DOCKER_COMPOSE_CMD := docker-compose run --rm
 DBT_PROFILE := --profiles-dir /work/profiles
 
-.PHONY = installations deps install clean get_ips setup_dbt_project
+.PHONY: installations deps install clean get_ips setup_dbt_project
 
 installations: deps install clean
 
