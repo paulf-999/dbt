@@ -1,0 +1,22 @@
+---
+dbt_project_dir: $HOME/git_repos/dbt/da-etl-dbtanalytics/prod_analytics
+dbt_profile: operations
+
+dbt_models: # dbt model params
+    quick_dbt_models:
+        - stg_rate_sheet_daily
+        - stg_remaining_balance_daily
+        - stg_warehouse_metering_history
+        - stg_metering_history
+    quick_dbt_models2:
+        - remaining_balance_daily_without_contract_view # depends on stg_remaining_balance_daily
+    long_running_dbt_models:
+        - daily_rates # depends on stg_rate_sheet_daily, remaining_balance_daily_without_contract_view
+        - stg_query_history
+        - stg_access_history
+    long_running_w_dependencies:
+        - query_base_object_access # depends on stg_access_history
+        - cost_per_query # depends on stg_query_history (and stg_warehouse_metering_history + stg_metering_history + daily_rates)
+    long_running_w_dependencies2:
+        - query_history_enriched # depends on stg_query_history, cost_per_query
+        - query_base_table_access # depends on query_base_object_access
