@@ -1,0 +1,27 @@
+default:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: {{ SNOWFLAKE_ACCOUNT_NAME }}
+      role: {{ ROLE }}
+
+      user: {{ USERNAME }}
+      password: "{{ '{{' }} env_var('<<ENV_PASSWORD>>') {{ '}}' }}"
+
+      database: {{ DB_NAME }}
+      warehouse: {{ WH_NAME }}
+      schema: {{ SCHEMA_NAME }}
+      threads: 4
+    prod:
+      type: snowflake
+      account: {{ SNOWFLAKE_ACCOUNT_NAME }}
+      role: {{ ROLE }}
+
+      user: {{ USERNAME }}
+      password: "{{ '{{' }} env_var('<<ENV_PASSWORD>>') {{ '}}' }}"
+
+      database: {{ DB_NAME }}
+      warehouse: {{ WH_NAME }}
+      schema: {{ SCHEMA_NAME }}
+      threads: 4

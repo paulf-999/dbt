@@ -1,0 +1,27 @@
+default:
+  target: cicd
+  outputs:
+    cicd:
+      type: snowflake
+      account: {{ SNOWFLAKE_ACCOUNT_NAME }}
+      role: {{ SNOWFLAKE_ROLE_QA }}
+
+      user: {{ SNOWFLAKE_DBT_USERNAME_QA }}
+      password: "{{ '{{' }} env_var('<<ENV_PASSWORD>>') {{ '}}' }}"
+
+      database: {{ DB_NAME }}
+      warehouse: {{ WH_NAME }}
+      schema: {{ SCHEMA_NAME }}
+      threads: 4
+    cicd_temp_timestamp_prefix:
+      type: snowflake
+      account: {{ SNOWFLAKE_ACCOUNT_NAME }}
+      role: {{ SNOWFLAKE_ROLE_QA }}
+
+      user: {{ SNOWFLAKE_DBT_USERNAME_QA }}
+      password: "{{ '{{' }} env_var('<<ENV_PASSWORD>>') {{ '}}' }}"
+
+      database: {{ DB_NAME }}
+      warehouse: {{ WH_NAME }}
+      schema: {{ SCHEMA_PREFIX }}_{{ DATETIME_STRING }}
+      threads: 4

@@ -1,0 +1,33 @@
+---
+steps:
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    # Step 1: Connect to Azure Key Vault (KV) and fetch the Vault secrets we're interested in
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    - task: AzureKeyVault@2
+      inputs:
+          azureSubscription: <KEY_VAULT_SUBSCRIPTION_NAME>
+          KeyVaultName: $(AZURE_KEY_VAULT_NAME)
+          SecretsFilter: '*'
+          RunAsPreJob: true
+      displayName: Prep Steps - AZ Key Vault - Retrieve Secrets
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    # Step 2: Generate a timestamp var ($DATETIME_TS) to use as a unique schema name
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    - task: Bash@3
+      inputs:
+          filePath: $(CICD_SCRIPTS_DIR)/common/dbt_specific/generate_timestamp_var.sh
+      displayName: Prep Steps - generate timestamp var (i.e., $DATETIME_TS) for dynamic schema name
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    # Step 3: Using the above KV secrets, let's render the dbt profiles.yml file
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    - task: Bash@3
+      inputs:
+          filePath: $(CICD_SCRIPTS_DIR)/common/dbt_specific/render_dbt_profile.sh
+      env:
+          SNOWFLAKE_ACCOUNT_NAME: $(SNOWFLAKE-ACCOUNT-NAME)
+          SNOWFLAKE_ROLE_QA: $(SNOWFLAKE-ROLE-QA)
+          SNOWFLAKE_DBT_USERNAME_QA: $(SNOWFLAKE-DBT-USERNAME-QA)
+          SNOWFLAKE_DATABASE_QA: $(SNOWFLAKE-DATABASE-QA)
+          DATETIME_STRING: $(DATETIME_TS) # Created in the above step "Timestamp VAR Creation (i.e., $DATETIME_TS)"
+          SNOWFLAKE_SCHEMA_PREFIX_QA: $(SNOWFLAKE-SCHEMA-PREFIX-QA)
+      displayName: Prep Steps - render dbt profiles.yml
