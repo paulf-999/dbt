@@ -1,0 +1,33 @@
+---
+steps:
+    # Note: to generated a value for 'state:modified', we require two manifest.json files for comparison - master vs feature branch
+
+    # Step 1: checkout the Git branch
+    - checkout: self # Checkout the branch
+      clean: true # delete any local branches created & undo any git config changes
+      displayName: Git checkout
+
+    # Step 2: Install Required Python libs inside VirtualEnv
+    - task: Bash@3
+      inputs:
+          filePath: $(CICD_SCRIPTS_DIR)/common/cicd_prep_steps/venv_preparation.sh
+          arguments: $(CICD_SCRIPTS_DIR)/dbt/dbt_slim_ci_pipeline_scripts/requirements.txt
+      displayName: Prep Steps - setup venv with required python libs
+
+    # Step 3: Call dbt config template to generate the dbt profile using creds from Azure Key Vault.
+    - template: common/dbt_config_steps.yml
+
+    # Step 4: Call dbt troubleshooting tasks template to facilitate troubleshooting job failures.
+    # This pipeline pushes the compiled (dbt) SQL files to the azure pipeline assets.
+    - template: dbt_slim_ci_child_templates/dbt_troubleshooting_tasks.yml
+
+    # Step 5: Run modified (and downstream) dbt models
+    - task: Bash@3
+      inputs:
+          filePath: $(CICD_SCRIPTS_DIR)/dbt/dbt_slim_ci_pipeline_scripts/dbt_slim_ci_job.sh
+          arguments: $(SOURCE_GIT_BRANCH_NAME)
+      env:
+          SNOWFLAKE_DBT_PASSWORD_QA: $(SNOWFLAKE-DBT-PASSWORD-QA)
+      displayName: === Main Step === dbt 'Slim CI' job logic (see src/cicd/scripts/dbt/dbt_slim_ci_pipeline_scripts/dbt_slim_ci_job.sh)
+    # Step 6: Copy the dbt logs & the dbt run artefacts (i.e., those stored within the dbt 'target' directory)
+    - template: dbt_slim_ci_child_templates/publish_dbt_logs_and_artefacts.yml

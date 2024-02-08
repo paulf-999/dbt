@@ -1,0 +1,27 @@
+---
+steps:
+    # Part 1: copy the dbt generated logs
+    - task: CopyFiles@2
+      inputs:
+          Contents: $(DBT_PROJECT_DIRECTORY)/logs/**
+          targetFolder: $(Build.ArtifactStagingDirectory)
+      displayName: Post Job Steps - copy dbt logs
+    # Part 2: copy the dbt run artefacts (i.e., those stored within the dbt 'target' directory)
+    - task: CopyFiles@2
+      inputs:
+          Contents: $(DBT_PROJECT_DIRECTORY)/target/run/prod_analytics/**
+          targetFolder: $(Build.ArtifactStagingDirectory)
+      displayName: Post Job Steps - copy dbt target/run artefacts (target/run/prod_analytics)
+    # Part 3: copy the list of modified dbt models identified
+    - task: CopyFiles@2
+      inputs:
+          Contents: $(DBT_PROJECT_DIRECTORY)/dbt_modified_models.txt
+          targetFolder: $(Build.ArtifactStagingDirectory)
+      displayName: Post Job Steps - copy the list of modified dbt models identified
+    # Part 4: Let's push the dbt generated logs up to AZ artefacts
+    - task: PublishBuildArtifacts@1
+      inputs:
+          PathtoPublish: $(Build.ArtifactStagingDirectory)
+          ArtifactName: dbt_job_run_artifacts
+          publishLocation: Container
+      displayName: Post Job Steps - publish the dbt logs & artifacts

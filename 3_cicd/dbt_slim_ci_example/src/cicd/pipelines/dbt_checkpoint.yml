@@ -1,0 +1,26 @@
+---
+steps:
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    # Step 1: Checkout the branch
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    - checkout: self # Check out the existing Git repository
+      clean: true # delete any local branches created & undo and git config changes
+      displayName: Git checkout
+    - task: Bash@3
+      inputs:
+          filePath: $(CICD_SCRIPTS_DIR)/common/cicd_prep_steps/venv_preparation.sh
+          arguments: $(CICD_SCRIPTS_DIR)/dbt/requirements.txt
+      displayName: Prep Steps - setup venv with required python libs
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    # Step 2: Call dbt config template to generate the dbt profile using creds from Azure Key Vault.
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    - template: common/dbt_config_steps.yml
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    # Step 3: Use the pre-commit package 'dbt-coverage' to check the dbt standards used.
+    #--------------------------------------------------------------------------------------------------------------------------------------
+    - task: Bash@3
+      inputs:
+          filePath: $(CICD_SCRIPTS_DIR)/dbt/dbt_checkpoint.sh
+      displayName: === Main Step === dbt-standards-checker
+      env:
+          SNOWFLAKE_DBT_PASSWORD_QA: $(SNOWFLAKE-DBT-PASSWORD-QA)

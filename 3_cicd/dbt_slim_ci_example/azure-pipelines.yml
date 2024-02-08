@@ -1,0 +1,29 @@
+---
+variables:
+    SOURCE_GIT_BRANCH_NAME: $[replace(variables['System.PullRequest.SourceBranch'], 'refs/heads/', '')] # the source branch from the Git PR (pull request)
+    CICD_SCRIPTS_DIR: src/cicd/scripts # filepath to where the CICD files are stored within the git repo
+    DBT_PROJECT_DIRECTORY: <DBT_PROJECT_DIRECTORY_NAME> # DBT_PROJECT_DIR is a reserved env var used by dbt, so needed to use an alternative var name (DBT_PROJECT_DIRECTORY)
+
+pr:
+    branches:
+        include:
+            - main
+    paths:
+        include: # Also only trigger the CI job when changes are made to the following directories/files
+            - <DBT_PROJECT_DIRECTORY_NAME>/data/*
+            - <DBT_PROJECT_DIRECTORY_NAME>/models/*
+            - <DBT_PROJECT_DIRECTORY_NAME>/snapshots/*
+            - <DBT_PROJECT_DIRECTORY_NAME>/tests/*
+            - <DBT_PROJECT_DIRECTORY_NAME>/dbt_project.yml
+
+pool: <AZURE-POOL-NAME>
+
+stages:
+    - stage: dbt
+      condition: eq(variables['Build.Reason'], 'PullRequest') # only run when a PR (Pull Request) is raised
+      jobs:
+          # dbt dbt run modified & downstream models only
+          - job: dbtSlimCIJob
+            displayName: "- dbt 'Slim CI' job"
+            steps:
+                - template: src/cicd/pipelines/dbt_slim_ci_pipeline.yml

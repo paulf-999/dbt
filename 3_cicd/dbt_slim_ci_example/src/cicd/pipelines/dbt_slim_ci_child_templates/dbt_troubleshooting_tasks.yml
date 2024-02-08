@@ -1,0 +1,39 @@
+---
+steps:
+    # copy the dbt generated artefacts (i.e., those stored within the dbt 'target' directory)
+    # though to generate the compiled dbt models, we'll first need to compile our dbt project
+    - script: |
+          # read in common logging functions
+          source src/cicd/scripts/common/common_cicd_functions.sh
+
+          log_message "${DEBUG}# Step 1: Troubleshooting step - list the contents of the directory."
+          log_message "${DEBUG_DETAILS}# Command: ls -la" && echo
+          ls -la && echo
+          log_message "${DEBUG}# Step 2: Activate a virtual environment 'venv'."
+          log_message "${DEBUG_DETAILS}# Command: source venv/bin/activate" && echo
+          source venv/bin/activate
+          log_message "${DEBUG}# Step 3: Compile the dbt project files"
+          log_message "${DEBUG_DETAILS}# Command: cd $(DBT_PROJECT_DIRECTORY) && dbt --quiet compile --profiles-dir=profiles" && echo
+          cd $(DBT_PROJECT_DIRECTORY) && dbt --quiet compile --profiles-dir=profiles
+      env:
+          SNOWFLAKE_DBT_PASSWORD_QA: $(SNOWFLAKE-DBT-PASSWORD-QA)
+      displayName: Pre-Job Troubleshooting Steps - run 'dbt compile' to generate the rendered dbt compilation files
+    # part 1: copy the compiled dbt models
+    - task: CopyFiles@2
+      inputs:
+          Contents: $(DBT_PROJECT_DIRECTORY)/target/compiled/prod_analytics/**
+          targetFolder: $(Build.ArtifactStagingDirectory)
+      displayName: Pre-Job Troubleshooting Steps - copy dbt target/compiled artefacts (target/run/prod_analytics)
+    # part 2: copy the dbt generated logs
+    - task: CopyFiles@2
+      inputs:
+          Contents: $(DBT_PROJECT_DIRECTORY)/logs/**
+          targetFolder: $(Build.ArtifactStagingDirectory)
+      displayName: Pre-Job Troubleshooting Steps - copy dbt logs
+    # part 3: publish the logs & compiled dbt models to the azure pipeline assets
+    - task: PublishBuildArtifacts@1
+      inputs:
+          PathtoPublish: $(Build.ArtifactStagingDirectory)
+          ArtifactName: dbt_job_run_artifacts
+          publishLocation: Container
+      displayName: Pre-Job Troubleshooting Steps - publish the dbt logs & artifacts
